@@ -1,28 +1,46 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import './scss/main.scss'
+import SplitHorizontal from './components/SplitHorizontal'
+import SplitVertical from './components/SplitVertical'
+import UserOutputPanel from './components/UserOutputPanel'
+import UserInputPanel from './components/UserInputPanel'
+import Head from './components/Head'
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+
+    constructor(props){
+        super(props)
+        this.state = {
+            jsonString: '',
+            mainStructName: ''
+        }
+    }
+
+    onUserInput = (jsonString) =>{
+        this.setState({jsonString});
+    };
+
+    onMainStructNameChange  = (mainStructName) =>{
+        this.setState({mainStructName});
+    }
+
+    render() {
+        return (
+            <div className="mainApp">
+                <SplitHorizontal topVh={20}>
+                    <Head/>
+                    <SplitVertical leftVw={50}>
+                        <UserInputPanel onTextAreaChange={this.onUserInput} onMainStructNameChange={this.onMainStructNameChange}>
+                            input
+                        </UserInputPanel>
+                        <UserOutputPanel jsonInput={this.state.jsonString} mainStructName={this.state.mainStructName}>
+                            output
+                        </UserOutputPanel>
+                    </SplitVertical>
+                </SplitHorizontal>
+            </div>
+        );
+    }
 }
 
 export default App;
