@@ -1,0 +1,5 @@
+type Abc struct {
+Item    []string `json:"item"`
+Name    int      `json:"name"`
+Surname float64  `json:"surname"`
+}

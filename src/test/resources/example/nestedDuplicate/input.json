@@ -1,0 +1,42 @@
+{
+  "name": 1,
+  "surname": 1.0,
+  "item": [
+    {
+      "a": 1,
+      "b": "hello"
+    },
+    {
+      "b": "world"
+    },
+    {
+      "c": 3.5
+    }
+  ],
+  "primary": {
+    "item": [
+      {
+        "a": 1,
+        "b": "hello"
+      },
+      {
+        "b": "world"
+      },
+      {
+        "c": 3.5
+      }
+    ],
+    "extraItem": [
+      {
+        "a": 1,
+        "b": "hello"
+      },
+      {
+        "b": "world"
+      },
+      {
+        "c": 3.5
+      }
+    ]
+  }
+}

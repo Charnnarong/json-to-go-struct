@@ -15,9 +15,24 @@ function parseJson(json) {
 }
 
 
+function increaseKeyCount(objMapKeyCount, key , additionKey) {
+    let additionKeyCount = 0;
+
+    if(additionKey && additionKey.hasOwnProperty(key)){
+        additionKeyCount = additionKey[key];
+    }
+
+    if(objMapKeyCount.hasOwnProperty(key)){
+        objMapKeyCount[key] = objMapKeyCount[key] + 1 + additionKeyCount;
+    }else{
+        objMapKeyCount[key] = 1 + additionKeyCount;
+    }
+}
+
 function makeStructMap(obj, structName, goFloat64 = true) {
 
     let objMap = {};
+    let objMapKeyCount = {};
 
     let structSignature = {};
     const objType = analyseType(obj, goFloat64);
@@ -27,23 +42,28 @@ function makeStructMap(obj, structName, goFloat64 = true) {
             if (keyType == 'array_object') {
                 const subTypeKey = upperFirstLetter(key);
                 keyType = 'array_' + subTypeKey;
-                let subType = makeStructMap(obj[key], subTypeKey, goFloat64);
-                objMap[subTypeKey] = subType[subTypeKey]
+                let [subType, subTypeKeyCount] = makeStructMap(obj[key], subTypeKey, goFloat64);
+                objMap[subTypeKey] = subType[subTypeKey];
+                increaseKeyCount(objMapKeyCount,subTypeKey,subTypeKeyCount)
+
+
             }
             else if (keyType == 'object'){
                 // Add to the root
                 const subTypeKey = upperFirstLetter(key);
                 keyType = subTypeKey;
-                let subType = makeStructMap(obj[key], subTypeKey, goFloat64);
-                objMap[subTypeKey] = subType[subTypeKey]
-
+                let [subType, subTypeKeyCount] = makeStructMap(obj[key], subTypeKey, goFloat64);
+                objMap[subTypeKey] = subType[subTypeKey];
+                increaseKeyCount(objMapKeyCount,subTypeKey,subTypeKeyCount);
                 // iterate through object items
                 for(const key2 of getSortedKey(obj[key])){
-                    let subType2 = makeStructMap(obj[key][key2] , upperFirstLetter(key2), goFloat64);
-                    objMap[upperFirstLetter(key2)] = subType2[upperFirstLetter(key2)]
+                    const key2Go = upperFirstLetter(key2);
+                    let [subType2,subTypeKeyCount] = makeStructMap(obj[key][key2] , key2Go, goFloat64);
+                    objMap[key2Go] = subType2[key2Go];
+                    increaseKeyCount(objMapKeyCount,key2Go,subTypeKeyCount);
                 }
             }
-            structSignature[key] = keyType
+            structSignature[key] = keyType;
         }
     }
     else if (objType == 'array_object') {
@@ -58,8 +78,9 @@ function makeStructMap(obj, structName, goFloat64 = true) {
     }
 
     objMap[structName] = structSignature;
+    increaseKeyCount(objMapKeyCount,structName);
 
-    return objMap;
+    return [objMap , objMapKeyCount];
 }
 
 function makeGoType(str) {
@@ -126,8 +147,9 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
 
 
     console.debug(value);
-    const structMap = makeStructMap(value, rootStructName, goFloat64);
+    const [structMap, structMapKeyCount] = makeStructMap(value, rootStructName, goFloat64);
     console.debug(structMap);
+    console.debug(structMapKeyCount);
     const goStruct = constructGoType(structMap);
 
     return {
