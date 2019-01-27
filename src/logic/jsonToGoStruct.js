@@ -36,6 +36,7 @@ function makeStructMap(obj, structName, goFloat64 = true) {
 
     let structSignature = {};
     const objType = analyseType(obj, goFloat64);
+
     if (objType == 'object') {
         for (const key of getSortedKey(obj)) {
             let keyType = analyseType(obj[key], goFloat64);

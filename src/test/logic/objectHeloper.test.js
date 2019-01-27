@@ -51,12 +51,17 @@ test("analyse Array of int Type ", () => {
 
 test("analyse Array of array of int Type ", () => {
     const x = [[1],[2],[3]];
-    expect(analyseType(x)).toEqual("array_array");
+    expect(analyseType(x)).toEqual("array_array_int");
+});
+
+test("analyse Array of array of any Type ", () => {
+    const x = [[1],[2.1],[3]];
+    expect(analyseType(x)).toEqual("array_array_float64");
 });
 
 test("analyse Array of array of mixed Type ", () => {
     const x = [['sdf'],[34.4],[3]];
-    expect(analyseType(x)).toEqual("array_array");
+    expect(analyseType(x)).toEqual("array_array_any");
 });
 
 test("analyse Array of float Type ", () => {
