@@ -86,7 +86,7 @@ var testCases = [
         input: `{
            "name": 1,
            "surname": 1.0,
-           "item" : [ {"a" : 1 , "b" : 99},{"b" : 2},{"c":3}]
+           "item" : [ {"a" : 1 },{"b" : 2},{"c":3}]
        }`,
         name: "abc",
         expected: `type Abc struct {
@@ -120,6 +120,46 @@ var testCases = [
                         B string \`json:"b,omitempty"\`
                         C float64 \`json:"c,omitempty"\`
                     }`
+    },
+    {
+        desc: 'test Render nested structure with duplicate types so we will reuse it',
+        input: `{
+                  "name": 1,
+                  "surname": 1.0,
+                  "item" : [ {"a" : 1 , "b" : "hello"},{"b" : "world"},{"c":3.5}],
+                  "primary" : {
+                            "item" : [ {"a" : 1 , "b" : "hello"},{"b" : "world"},{"c":3.5}],
+                            "extraItem" : [ {"a" : 1 , "b" : "hello"},{"b" : "world"},{"c":3.5}]
+                  }
+              }
+        `,
+        name: "abc",
+        expected: `
+                type Abc struct {
+                    Item    []Item  \`json:"item"\`
+                    Name    int     \`json:"name"\`
+                    Primary Primary \`json:"primary"\`
+                    Surname float64 \`json:"surname"\`
+                }
+                
+                type ExtraItem struct {
+                    A int     \`json:"a,omitempty"\`
+                    B string  \`json:"b,omitempty"\`
+                    C float64 \`json:"c,omitempty"\`
+                }
+                
+                type Item struct {
+                    A int     \`json:"a,omitempty"\`
+                    B string  \`json:"b,omitempty"\`
+                    C float64 \`json:"c,omitempty"\`
+                }
+                
+                type Primary struct {
+                    ExtraItem []ExtraItem \`json:"extraItem"\`
+                    Item    []Item  \`json:"item"\`
+                
+                }
+`
     },
 ];
 

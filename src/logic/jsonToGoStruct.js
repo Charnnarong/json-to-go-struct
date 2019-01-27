@@ -23,23 +23,35 @@ function makeStructMap(obj, structName, goFloat64 = true) {
     const objType = analyseType(obj, goFloat64);
     if (objType == 'object') {
         for (const key of getSortedKey(obj)) {
-            if (obj.hasOwnProperty(key)) {
-                let keyType = analyseType(obj[key], goFloat64);
-                if (keyType == 'array_object') {
-                    const subTypeKey = upperFirstLetter(key);
-                    keyType = 'array_' + subTypeKey;
-                    let subType = makeStructMap(obj[key], subTypeKey, goFloat64);
-                    objMap[subTypeKey] = subType[subTypeKey]
-                }
-                structSignature[key] = keyType
+            let keyType = analyseType(obj[key], goFloat64);
+            if (keyType == 'array_object') {
+                const subTypeKey = upperFirstLetter(key);
+                keyType = 'array_' + subTypeKey;
+                let subType = makeStructMap(obj[key], subTypeKey, goFloat64);
+                objMap[subTypeKey] = subType[subTypeKey]
             }
+            else if (keyType == 'object'){
+                // Add to the root
+                const subTypeKey = upperFirstLetter(key);
+                keyType = subTypeKey;
+                let subType = makeStructMap(obj[key], subTypeKey, goFloat64);
+                objMap[subTypeKey] = subType[subTypeKey]
+
+                // iterate through object items
+                for(const key2 of getSortedKey(obj[key])){
+                    let subType2 = makeStructMap(obj[key][key2] , upperFirstLetter(key2), goFloat64);
+                    objMap[upperFirstLetter(key2)] = subType2[upperFirstLetter(key2)]
+                }
+            }
+            structSignature[key] = keyType
         }
     }
     else if (objType == 'array_object') {
         // let signature = {};
         for (let i = 0; i < obj.length; i++) {
             for (const key of getSortedKey(obj[i])) {
-                structSignature[key + ",omitempty"] = analyseType(obj[i][key])
+                let keyType = analyseType(obj[i][key], goFloat64);
+                structSignature[key + ",omitempty"] = keyType
             }
         }
         // structSignature['x'] =  'xxxx';
