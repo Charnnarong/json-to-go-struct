@@ -14,21 +14,6 @@ function parseJson(json) {
     }
 }
 
-
-function increaseKeyCount(objMapKeyCount, key, additionKey) {
-    let additionKeyCount = 0;
-
-    if (additionKey && additionKey.hasOwnProperty(key)) {
-        additionKeyCount = additionKey[key];
-    }
-
-    if (objMapKeyCount.hasOwnProperty(key)) {
-        objMapKeyCount[key] = objMapKeyCount[key] + 1 + additionKeyCount;
-    } else {
-        objMapKeyCount[key] = 1 + additionKeyCount;
-    }
-}
-
 function makeStructMap(obj, structName, goFloat64 = true) {
 
     let layers = {};
@@ -39,15 +24,6 @@ function makeStructMap(obj, structName, goFloat64 = true) {
     }
 
     function parseMap(jsonObj, layer, prefixKey) {
-        // TODO analyze type here.
-        // const jsonObjType = analyseType(jsonObj);
-        // if(jsonObjType == "object"){
-        //     if (goStructCandidate.hasOwnProperty(key)) {
-        //         goStructCandidate[key].push(Object.keys(value));
-        //     } else {
-        //         goStructCandidate[key] = [Object.keys(value)];
-        //     }
-        // }
 
         for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
@@ -85,8 +61,7 @@ function makeStructMap(obj, structName, goFloat64 = true) {
         }
 
     }
-    // let wrapper = {}
-    // wrapper[structName] = obj;
+
     parseMap(obj, 0, "");
 
 
@@ -157,10 +132,9 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
 
 
     console.debug(value);
-    const [structMap, structMapKeyCount] = makeStructMap(value, rootStructName, goFloat64);
-    console.debug(structMap);
-    console.debug(structMapKeyCount);
-    const goStruct = constructGoType(structMap);
+    const layers = makeStructMap(value, rootStructName, goFloat64);
+    console.debug(layers);
+    const goStruct = constructGoType(layers);
 
     return {
         // value: `type ${rootStructName} struct {
