@@ -31,7 +31,7 @@ const R = require('ramda');
  */
 function parseGoStructTextToJsonObject(receivedElement) {
 
-    const tokens = receivedElement.replace(/{}/,"{ }").split(/[^\S\r\n]/);
+    const tokens = receivedElement.replace(/{}/,"{ }").split(/\s/).filter(x => x!=="");
     let result = {};
     let typeStack = [];
     let keyStack = []; // for go's struct type name.
@@ -41,51 +41,61 @@ function parseGoStructTextToJsonObject(receivedElement) {
     let memberTypeStack = [];
     let memberJsonNameStack = [];
 
-    tokens.forEach( token =>{
-        if( typeStack.length == 0 && token == "type"){
+    // tokens.forEach( token =>{
+    for(let i = 0 ; i < tokens.length;i++)
+    {
+        const token = tokens[i];
+        if (typeStack.length == 0 && token == "type") {
             typeStack.push(token);
-            return;
+            continue;
         }
-        if(keyStack.length == 0){
+        if (keyStack.length == 0) {
             keyStack.push(token);
-            return;
+            continue;
         }
-        if( token == "struct" && structStack.length == 0){
+        if (token == "struct" && structStack.length == 0) {
             structStack.push(token);
-            return;
+            continue;
         }
-        if(token.includes("{") && structStack.length > 0){
+        if (token.includes("{") && structStack.length > 0) {
             structStack.push(token);
-            return;
+            continue;
         }
-        if(memberKeyStack.length == 0){
-            memberKeyStack.push(token);
-            return;
-        }
-        if(memberTypeStack.length == 0){
-            memberTypeStack.push(token);
-            return;
-        }
-        if(memberJsonNameStack.length == 0){
-            memberJsonNameStack.push(token);
-            return;
-        }
-        if(memberJsonNameStack.length > 0){
-            let memberMeta  =[ memberTypeStack.pop() , memberJsonNameStack.pop()];
-            let memberKey = memberKeyStack.pop();
-            memberItem[memberKey] = memberMeta;
-            return;
-        }
-        if(token.includes("}")){
+        if (token.includes("}")) {
             result[keyStack.pop()] = memberItem;
-            memberItem={};
+            memberItem = {};
             structStack = [];
             keyStack = [];
             typeStack = [];
-            return;
+            continue;
         }
+        if (memberKeyStack.length == 0) {
+            memberKeyStack.push(token);
+            continue;
+        }
+        if (memberTypeStack.length == 0) {
+            memberTypeStack.push(token);
+            continue;
+        }
+        if (memberJsonNameStack.length == 0) {
+            memberJsonNameStack.push(token);
 
-    });
+            let memberMeta = {"type": memberTypeStack.pop(), "key": memberJsonNameStack.pop()};
+            let memberKey = memberKeyStack.pop();
+            memberItem[memberKey] = memberMeta;
+            continue;
+
+        }
+        // if (memberJsonNameStack.length > 0) {
+        //     let memberMeta = {"type": memberTypeStack.pop(), "key": memberJsonNameStack.pop()};
+        //     let memberKey = memberKeyStack.pop();
+        //     memberItem[memberKey] = memberMeta;
+        //     continue;
+        // }
+
+
+    }
+    // });
 
     return result;
 }

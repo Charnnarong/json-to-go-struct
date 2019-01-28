@@ -39,19 +39,81 @@ test('toMatchGoStruct same order', () => {
 
 });
 
+test('toMatchGoStruct lack key', () => {
+
+    const input = `type Aaa struct {
+        a xxx yyy 
+        b xxx yyy 
+    }`;
+    const expected = `type Aaa struct {
+        a xxx yyy 
+    }`;
+
+    expect({value: input}).not.toMatchGoStruct(expected);
+
+});
+
+test('toMatchGoStruct differ in type', () => {
+
+    const input = `type Aaa struct {
+        a int yyy 
+        b xxx yyy 
+    }`;
+    const expected = `type Aaa struct {
+        a float32 yyy 
+        b xxx yyy 
+    }`;
+
+    expect({value: input}).not.toMatchGoStruct(expected);
+
+});
+
+test('toMatchGoStruct differ in json name', () => {
+
+    const input = `type Aaa struct {
+        a xxx name 
+        b xxx yyy 
+    }`;
+    const expected = `type Aaa struct {
+        a xxx surname 
+        b xxx yyy 
+    }`;
+
+    expect({value: input}).not.toMatchGoStruct(expected);
+
+});
+
 test('toMatchGoStruct different order', () => {
 
     const input = `type Aaa struct {
         a xxx yyy 
-        b
-        c
+        b xxx yyy 
+        c xxx yyy 
     }`;
     const expected = `type Aaa struct {
         a xxx yyy 
-        c
-        b
+        c xxx yyy 
+        b xxx yyy 
     }`;
 
     expect({value: input}).toMatchGoStruct(expected);
 
 });
+
+test('toMatchGoStruct different struct', () => {
+
+    const input = `type Aaa struct {
+        a xxx yyy 
+        b xxx yyy 
+        c yyy xxx 
+    }`;
+    const expected = `type Aaa struct {
+        a xxx yyy 
+        c xxx yyy 
+        b xxx yyy 
+    }`;
+
+    expect({value: input}).not.toMatchGoStruct(expected);
+
+});
+
