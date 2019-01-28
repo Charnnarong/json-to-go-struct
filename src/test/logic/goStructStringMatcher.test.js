@@ -2,7 +2,7 @@ import toMatchGoStruct from "./goStructStringMatcher";
 
 expect.extend({
     toMatchGoStruct
-})
+});
 
 test('toMatchGoStruct', () => {
 
@@ -27,12 +27,12 @@ test('toMatchGoStruct multi line', () => {
 test('toMatchGoStruct same order', () => {
 
     const input = `type Aaa struct {
-        a xxx yyy sss
-        b xxx yyy sss
+        a xxx yyy 
+        b xxx yyy 
     }`;
     const expected = `type Aaa struct {
-        a xxx yyy sss
-        b xxx yyy sss
+        a xxx yyy 
+        b xxx yyy 
     }`;
 
     expect({value: input}).toMatchGoStruct(expected);
@@ -42,12 +42,12 @@ test('toMatchGoStruct same order', () => {
 test('toMatchGoStruct different order', () => {
 
     const input = `type Aaa struct {
-        a xxx yyy sss
+        a xxx yyy 
         b
         c
     }`;
     const expected = `type Aaa struct {
-        a xxx yyy sss
+        a xxx yyy 
         c
         b
     }`;
