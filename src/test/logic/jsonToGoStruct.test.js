@@ -116,3 +116,11 @@ test("Recursive type", () => {
 
     expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
 });
+
+test("Object self recursive", () => {
+
+    const input = testResourceAsString("example/objectSelfRecursive/input.json");
+    const expected = testResourceAsString("example/objectSelfRecursive/output.text");
+
+    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
+});

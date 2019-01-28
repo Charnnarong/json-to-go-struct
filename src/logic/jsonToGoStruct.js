@@ -15,50 +15,69 @@ function parseJson(json) {
 }
 
 
-function increaseKeyCount(objMapKeyCount, key , additionKey) {
+function increaseKeyCount(objMapKeyCount, key, additionKey) {
     let additionKeyCount = 0;
 
-    if(additionKey && additionKey.hasOwnProperty(key)){
+    if (additionKey && additionKey.hasOwnProperty(key)) {
         additionKeyCount = additionKey[key];
     }
 
-    if(objMapKeyCount.hasOwnProperty(key)){
+    if (objMapKeyCount.hasOwnProperty(key)) {
         objMapKeyCount[key] = objMapKeyCount[key] + 1 + additionKeyCount;
-    }else{
+    } else {
         objMapKeyCount[key] = 1 + additionKeyCount;
     }
 }
 
 function makeStructMap(obj, structName, goFloat64 = true) {
 
-    let objMap = [];
     let layers = {};
+    let goStructCandidate = {} // {  name: [ signature1, signature2, ..... signatureN ] }
 
-    function parseMap(jsonObj,layer,prefixKey) {
+    function makeParseKey(prefixKey, key) {
+        return `(${prefixKey},${key})`;
+    }
 
-        function makeParseKey(prefixKey, key) {
-            return `(${prefixKey},${key})`;
-        }
+    function parseMap(jsonObj, layer, prefixKey) {
+        // TODO analyze type here.
+        // const jsonObjType = analyseType(jsonObj);
+        // if(jsonObjType == "object"){
+        //     if (goStructCandidate.hasOwnProperty(key)) {
+        //         goStructCandidate[key].push(Object.keys(value));
+        //     } else {
+        //         goStructCandidate[key] = [Object.keys(value)];
+        //     }
+        // }
 
-        for(const key of getSortedKey(jsonObj)){
+        for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
             const type = analyseType(value);
-            const parsedKey = makeParseKey(prefixKey,key);
-            // objMap.push([layer,parsedKey,type]);
-            if(layers.hasOwnProperty(layer)){
-                layers[layer].push([parsedKey,type])
-            }else{
-                layers[layer] = [[parsedKey,type]]
+            const parsedKey = makeParseKey(prefixKey, key);
+
+            if (layers.hasOwnProperty(layer)) {
+                layers[layer].push([parsedKey, type])
+            } else {
+                layers[layer] = [[parsedKey, type]]
             }
-            if(type == "object" || type == "array"){
-                parseMap(value,layer+1,parsedKey);
+
+            if (type == "object") {
+                parseMap(value, layer + 1, parsedKey);
+                if (goStructCandidate.hasOwnProperty(key)) {
+                    goStructCandidate[key].push(Object.keys(value));
+                } else {
+                    goStructCandidate[key] = [Object.keys(value)];
+                }
+
+            } else if (type == "array") {
+                value.forEach(v =>
+                    parseMap(v, layer + 1, parsedKey));
             }
 
         }
 
     }
 
-    parseMap(obj,0,"");
+    parseMap(obj, 0, "");
 
 
     return layers
