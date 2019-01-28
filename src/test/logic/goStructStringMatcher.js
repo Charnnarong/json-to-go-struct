@@ -7,31 +7,32 @@ const R = require('ramda');
  type Aaa struct {
         a xxx yyy
         b xxx yyy
-    };
-
- type Xyz struct {
-        a xxx yyy
-        b xxx yyy
-    };
-
+        c xxx yyy
+    }
+ 
  output:
  ------------------
  {
-    "Aaa" : {
-        "a" : {  xxx,yyy],
-        "b" : [xxx,yyy]
+  "Aaa": {
+    "a": {
+      "type": "xxx",
+      "key": "yyy"
     },
-    "Xyz" : {
-        "a" : [xxx,yyy],
-        "b" : [xxx,yyy]
+    "b": {
+      "type": "xxx",
+      "key": "yyy"
+    },
+    "c": {
+      "type": "xxx",
+      "key": "yyy"
     }
-
- }
+  }
+}
  * @param receivedElement
  */
 function parseGoStructTextToJsonObject(receivedElement) {
 
-    const tokens = receivedElement.replace(/{}/,"{ }").split(/\s/).filter(x => x!=="");
+    const tokens = receivedElement.replace(/{}/, "{ }").split(/\s/).filter(x => x !== "");
     let result = {};
     let typeStack = [];
     let keyStack = []; // for go's struct type name.
@@ -41,25 +42,22 @@ function parseGoStructTextToJsonObject(receivedElement) {
     let memberTypeStack = [];
     let memberJsonNameStack = [];
 
-    // tokens.forEach( token =>{
-    for(let i = 0 ; i < tokens.length;i++)
-    {
-        const token = tokens[i];
+    tokens.forEach(token => {
         if (typeStack.length == 0 && token == "type") {
             typeStack.push(token);
-            continue;
+            return;
         }
         if (keyStack.length == 0) {
             keyStack.push(token);
-            continue;
+            return;
         }
         if (token == "struct" && structStack.length == 0) {
             structStack.push(token);
-            continue;
+            return;
         }
         if (token.includes("{") && structStack.length > 0) {
             structStack.push(token);
-            continue;
+            return;
         }
         if (token.includes("}")) {
             result[keyStack.pop()] = memberItem;
@@ -67,15 +65,15 @@ function parseGoStructTextToJsonObject(receivedElement) {
             structStack = [];
             keyStack = [];
             typeStack = [];
-            continue;
+            return;
         }
         if (memberKeyStack.length == 0) {
             memberKeyStack.push(token);
-            continue;
+            return;
         }
         if (memberTypeStack.length == 0) {
             memberTypeStack.push(token);
-            continue;
+            return;
         }
         if (memberJsonNameStack.length == 0) {
             memberJsonNameStack.push(token);
@@ -83,19 +81,10 @@ function parseGoStructTextToJsonObject(receivedElement) {
             let memberMeta = {"type": memberTypeStack.pop(), "key": memberJsonNameStack.pop()};
             let memberKey = memberKeyStack.pop();
             memberItem[memberKey] = memberMeta;
-            continue;
+            return;
 
         }
-        // if (memberJsonNameStack.length > 0) {
-        //     let memberMeta = {"type": memberTypeStack.pop(), "key": memberJsonNameStack.pop()};
-        //     let memberKey = memberKeyStack.pop();
-        //     memberItem[memberKey] = memberMeta;
-        //     continue;
-        // }
-
-
-    }
-    // });
+    });
 
     return result;
 }
@@ -111,10 +100,11 @@ function toMatchGoStruct(received, wanted, err) {
     }
 
     // Not not-white-space (meaning white space) but also not include \r and \n as well.
-    const receiveObj =  parseGoStructTextToJsonObject(received['value']); // received['value'].replace(/[^\S]/g, '');
-    const wantedObj =  parseGoStructTextToJsonObject(wanted); wanted.replace(/[^\S]/g, '');
+    const receiveObj = parseGoStructTextToJsonObject(received['value']); // received['value'].replace(/[^\S]/g, '');
+    const wantedObj = parseGoStructTextToJsonObject(wanted);
+    wanted.replace(/[^\S]/g, '');
 
-    const pass = R.equals(receiveObj,wantedObj);
+    const pass = R.equals(receiveObj, wantedObj);
 
     if (pass) {
         return {

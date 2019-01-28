@@ -39,6 +39,36 @@ test('toMatchGoStruct same order', () => {
 
 });
 
+test('toMatchGoStruct multiple type diffrent order', () => {
+
+    const input = `
+    type Aaa struct {
+        a xxx yyy 
+        b xxx yyy 
+    }
+    
+    type Baa struct {
+        ba xxx yyy 
+        bb xxx yyy 
+    }
+    `;
+
+    const expected = `    
+    type Baa struct {
+        ba xxx yyy 
+        bb xxx yyy 
+    }
+    
+    type Aaa struct {
+        b xxx yyy 
+        a xxx yyy 
+    }
+    `;
+
+    expect({value: input}).toMatchGoStruct(expected);
+
+});
+
 test('toMatchGoStruct lack key', () => {
 
     const input = `type Aaa struct {
