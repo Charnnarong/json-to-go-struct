@@ -9,7 +9,7 @@ const R = require('ramda');
         b xxx yyy
         c xxx yyy
     }
- 
+
  output:
  ------------------
  {
@@ -109,17 +109,17 @@ function toMatchGoStruct(received, wanted, err) {
     if (pass) {
         return {
             message: () =>
-                `expected ------\n${received['value']}\nto be ---------\n${wanted}\n`,
+                "expected ------\n${received['value']}\nto be ---------\n${wanted}\n",
             pass: true,
         }
     } else {
         return {
             message: () =>
-                `expected ------\n${received['value']}\nto be ---------\n${wanted}\n
-                    ===========================
-                    received:\n${ JSON.stringify(receiveObj)}\n
-                    expected:\n${JSON.stringify(wantedObj)}\n
-                    `,
+                `\nExpected: \n\n${wanted}\n\n` +
+                `Received: \n\n${received['value']}\n\n` +
+                "================================\n"+
+                `\nExpected: \n${JSON.stringify(wantedObj)}\n\n` +
+                `Received: \n${JSON.stringify(receiveObj)}\n\n`,
             pass: false,
         };
     }
