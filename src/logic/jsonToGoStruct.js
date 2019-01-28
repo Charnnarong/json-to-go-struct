@@ -69,14 +69,24 @@ function makeStructMap(obj, structName, goFloat64 = true) {
                 }
 
             } else if (type == "array") {
-                value.forEach(v =>
-                    parseMap(v, layer + 1, parsedKey));
+
+                value.forEach(v =>{
+                    if (analyseType(v) == "object"){
+                        if (goStructCandidate.hasOwnProperty(key)) {
+                            goStructCandidate[key].push(Object.keys(v));
+                        } else {
+                            goStructCandidate[key] = [Object.keys(v)];
+                        }
+                    }
+                    parseMap(v, layer + 1, parsedKey);
+                });
             }
 
         }
 
     }
-
+    // let wrapper = {}
+    // wrapper[structName] = obj;
     parseMap(obj, 0, "");
 
 
