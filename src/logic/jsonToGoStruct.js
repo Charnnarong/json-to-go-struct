@@ -31,57 +31,37 @@ function increaseKeyCount(objMapKeyCount, key , additionKey) {
 
 function makeStructMap(obj, structName, goFloat64 = true) {
 
-    let objMap = {};
-    let objMapKeyCount = {};
+    let objMap = [];
+    let layers = {};
 
-    let structSignature = {};
-    const objType = analyseType(obj, goFloat64);
+    function parseMap(jsonObj,layer,prefixKey) {
 
-    if (objType == 'object') {
-        for (const key of getSortedKey(obj)) {
-            let keyType = analyseType(obj[key], goFloat64);
-            if (keyType == 'array_object') {
-                const subTypeKey = upperFirstLetter(key);
-                keyType = 'array_' + subTypeKey;
-                let [subType, subTypeKeyCount] = makeStructMap(obj[key], subTypeKey, goFloat64);
-                objMap[subTypeKey] = subType[subTypeKey];
-                increaseKeyCount(objMapKeyCount,subTypeKey,subTypeKeyCount)
-
-
-            }
-            else if (keyType == 'object'){
-                // Add to the root
-                const subTypeKey = upperFirstLetter(key);
-                keyType = subTypeKey;
-                let [subType, subTypeKeyCount] = makeStructMap(obj[key], subTypeKey, goFloat64);
-                objMap[subTypeKey] = subType[subTypeKey];
-                increaseKeyCount(objMapKeyCount,subTypeKey,subTypeKeyCount);
-                // iterate through object items
-                for(const key2 of getSortedKey(obj[key])){
-                    const key2Go = upperFirstLetter(key2);
-                    let [subType2,subTypeKeyCount] = makeStructMap(obj[key][key2] , key2Go, goFloat64);
-                    objMap[key2Go] = subType2[key2Go];
-                    increaseKeyCount(objMapKeyCount,key2Go,subTypeKeyCount);
-                }
-            }
-            structSignature[key] = keyType;
+        function makeParseKey(prefixKey, key) {
+            return `(${prefixKey},${key})`;
         }
-    }
-    else if (objType == 'array_object') {
-        // let signature = {};
-        for (let i = 0; i < obj.length; i++) {
-            for (const key of getSortedKey(obj[i])) {
-                let keyType = analyseType(obj[i][key], goFloat64);
-                structSignature[key + ",omitempty"] = keyType
+
+        for(const key of getSortedKey(jsonObj)){
+            const value = jsonObj[key];
+            const type = analyseType(value);
+            const parsedKey = makeParseKey(prefixKey,key);
+            // objMap.push([layer,parsedKey,type]);
+            if(layers.hasOwnProperty(layer)){
+                layers[layer].push([parsedKey,type])
+            }else{
+                layers[layer] = [[parsedKey,type]]
             }
+            if(type == "object" || type == "array"){
+                parseMap(value,layer+1,parsedKey);
+            }
+
         }
-        // structSignature['x'] =  'xxxx';
+
     }
 
-    objMap[structName] = structSignature;
-    increaseKeyCount(objMapKeyCount,structName);
+    parseMap(obj,0,"");
 
-    return [objMap , objMapKeyCount];
+
+    return layers
 }
 
 function makeGoType(str) {

@@ -7,63 +7,63 @@ function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
 
     if (any.constructor == Array) {
         finalType = "array";
-        if (recursiveDebt > 1) {
-            return finalType;
-        }
-
-        let arrayType = "any";
-        const typesSet = new Set();
-        for (let i = 0; i < any.length; i++) {
-            arrayType = analyseType(any[i], recursiveDebt + 1);
-            typesSet.add(arrayType)
-        }
-
-        if (typesSet.size == 1) {
-            arrayType = typesSet.values().next().value;
-        }
-        else if (typesSet.size == 2) {
-            let int = '';
-            let float = '';
-
-            typesSet.forEach((value1, value2, set) => {
-                if (value1.includes("int")) {
-                    int = value1
-                }
-                if (value1.includes("float")) {
-                    float = value1
-                }
-            });
-
-            if (int && float) {
-                arrayType = float;
-            }
-            // else{
-            //     arrayType = "any"
-            // }
-        } else {
-            let int = ''
-            let float = ''
-            let string = ''
-
-            typesSet.forEach((value1, value2, set) => {
-                if (value1.includes("int")) {
-                    int = value1
-                }
-                if (value1.includes("float")) {
-                    float = value1
-                }
-                if (value1.includes("string")) {
-                    string = value1
-                }
-            });
-
-            if (int && float && string) {
-                arrayType = string.replace("string","any");
-            }
-        }
-
-
-        finalType += ("_" + arrayType)
+        // if (recursiveDebt > 1) {
+        //     return finalType;
+        // }
+        //
+        // let arrayType = "any";
+        // const typesSet = new Set();
+        // for (let i = 0; i < any.length; i++) {
+        //     arrayType = analyseType(any[i], recursiveDebt + 1);
+        //     typesSet.add(arrayType)
+        // }
+        //
+        // if (typesSet.size == 1) {
+        //     arrayType = typesSet.values().next().value;
+        // }
+        // else if (typesSet.size == 2) {
+        //     let int = '';
+        //     let float = '';
+        //
+        //     typesSet.forEach((value1, value2, set) => {
+        //         if (value1.includes("int")) {
+        //             int = value1
+        //         }
+        //         if (value1.includes("float")) {
+        //             float = value1
+        //         }
+        //     });
+        //
+        //     if (int && float) {
+        //         arrayType = float;
+        //     }
+        //     // else{
+        //     //     arrayType = "any"
+        //     // }
+        // } else {
+        //     let int = ''
+        //     let float = ''
+        //     let string = ''
+        //
+        //     typesSet.forEach((value1, value2, set) => {
+        //         if (value1.includes("int")) {
+        //             int = value1
+        //         }
+        //         if (value1.includes("float")) {
+        //             float = value1
+        //         }
+        //         if (value1.includes("string")) {
+        //             string = value1
+        //         }
+        //     });
+        //
+        //     if (int && float && string) {
+        //         arrayType = string.replace("string","any");
+        //     }
+        // }
+        //
+        //
+        // finalType += ("_" + arrayType)
     }
 
     return finalType;
