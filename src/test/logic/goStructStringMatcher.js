@@ -18,7 +18,7 @@ const R = require('ramda');
  ------------------
  {
     "Aaa" : {
-        "a" : [xxx,yyy],
+        "a" : {  xxx,yyy],
         "b" : [xxx,yyy]
     },
     "Xyz" : {
@@ -127,8 +127,8 @@ function toMatchGoStruct(received, wanted, err) {
             message: () =>
                 `expected ------\n${received['value']}\nto be ---------\n${wanted}\n
                     ===========================
-                    received:\n${receiveObj}\n
-                    expected:\n${wantedObj}\n
+                    received:\n${ JSON.stringify(receiveObj)}\n
+                    expected:\n${JSON.stringify(wantedObj)}\n
                     `,
             pass: false,
         };
