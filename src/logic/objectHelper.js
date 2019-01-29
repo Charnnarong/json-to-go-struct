@@ -4,8 +4,9 @@ function getSortedKey(obj) {
 
 function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
     let finalType = 'object';
-
-    if (any.constructor == Array) {
+    if (any == null) {
+        finalType = "null"
+    } else if (any && any.constructor == Array) {
         finalType = "array";
         // if (recursiveDebt > 1) {
         //     return finalType;
@@ -76,15 +77,15 @@ function analyseNumberType(any, goFloat64 = true) {
 
 function analyseType(any, recursiveDebt = 0, goFloat64 = true) {
     const basicType = typeof(any);
-    let finalType = basicType;
+    // let finalType = basicType;
 
-    switch (finalType) {
+    switch (basicType) {
         case "object" :
             return analyseObjectType(any, recursiveDebt);
         case "number" :
             return analyseNumberType(any, goFloat64);
         default :
-            return finalType;
+            return basicType;
     }
 }
 

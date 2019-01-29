@@ -24,6 +24,15 @@ function makeStructMap(obj, structName, goFloat64 = true) {
     }
 
     function parseMap(jsonObj, layer, prefixKey) {
+        if(jsonObj == null){
+            return;
+        }
+        const jsonObjType = analyseType(jsonObj);
+        // if(jsonObjType == 'object'){
+        //
+        // }else if(jsonObjType == 'array'){
+        //
+        // }
 
         for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
@@ -48,13 +57,14 @@ function makeStructMap(obj, structName, goFloat64 = true) {
 
                 value.forEach(v =>{
                     if (analyseType(v) == "object"){
+                        parseMap(v, layer + 1, parsedKey);
                         if (goStructCandidate.hasOwnProperty(key)) {
                             goStructCandidate[key].push(Object.keys(v));
                         } else {
                             goStructCandidate[key] = [Object.keys(v)];
                         }
                     }
-                    parseMap(v, layer + 1, parsedKey);
+
                 });
             }
 

@@ -124,3 +124,11 @@ test("Object self recursive", () => {
 
     expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
 });
+
+test("nestedComplex", () => {
+
+    const input = testResourceAsString("example/nestedComplex/input.json");
+    const expected = testResourceAsString("example/nestedComplex/output.text");
+
+    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
+});
