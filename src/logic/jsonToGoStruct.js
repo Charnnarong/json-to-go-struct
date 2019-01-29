@@ -17,7 +17,8 @@ function parseJson(json) {
 function makeStructMap(obj, structName, goFloat64 = true) {
 
     let layers = {};
-    let goStructCandidate = {} // {  name: [ signature1, signature2, ..... signatureN ] }
+    let goStructCandidate = {}; // {  name: [ signature1, signature2, ..... signatureN ] }
+    let omitemptyMember = {};
 
     function makeParseKey(prefixKey, key) {
         return `(${prefixKey},${key})`;
@@ -70,7 +71,18 @@ function makeStructMap(obj, structName, goFloat64 = true) {
     (function combinedGoStructCandidateMember() {
         Object.keys(goStructCandidate).forEach(key =>{
             let typeMap = {};
-            (new Set(flattenDeep(goStructCandidate[key]))).forEach(x => {typeMap[x] = [] });
+            let memberCount = {};
+            let flattenCandidateMember = flattenDeep(goStructCandidate[key]);
+            flattenCandidateMember.forEach(x => {
+               if(memberCount[x]){
+                   memberCount[x] = memberCount[x] + 1;
+               } else{
+                   memberCount[x] = 1;
+               }
+            });
+            Object.keys(memberCount).map(k => { memberCount[k] = memberCount[k] < goStructCandidate[key].length });
+            omitemptyMember[key] = memberCount;
+            (new Set(flattenCandidateMember)).forEach(x => {typeMap[x] = [] });
             goStructCandidate[key] = typeMap;
         })
     })();
@@ -94,19 +106,19 @@ function makeStructMap(obj, structName, goFloat64 = true) {
         }
     })();
 
-    return goStructCandidate
+    return {goStructCandidate,omitemptyMember}
 }
 
 function flattenDeep(arr) {
     return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
 }
 
-function makeGoType(arrayTypes,key) {
+function makeGoType(arrayTypes,key,isReferenceType) {
     const userDefinedType = makeGoStructVariable(key);
     if(arrayTypes.length == 1){
         switch (arrayTypes[0]) {
             case "array_object": return `[]${userDefinedType}`;
-            case "object": return userDefinedType+"";
+            case "object": return isReferenceType? "*" + userDefinedType : userDefinedType;
             case "boolean": return `bool`;
             case "array_int": return `[]int`;
             case "array_string": return `[]string`;
@@ -150,7 +162,7 @@ function makeGoStructVariable(s) {
  * @param structMap e.g { Abc: { name: 'string' , surname: 'string' } }
  * @returns {undefined}
  */
-function constructGoType(candidates) {
+function constructGoType(candidates,omitemptyMember) {
 
     let result = '';
     Object.keys(candidates).forEach(key =>{
@@ -161,7 +173,9 @@ function constructGoType(candidates) {
         for (const key2 of values) {
             // key2 = member name
             const arrayTypes = candidates[key][key2];
-            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(arrayTypes,key2) + `\t\`json:"${key2}"\``;
+            const isReferenceType = key == key2;
+            const jsonType = omitemptyMember[key][key2] ? `\t\`json:"${key2},omitempty"\`` : `\t\`json:"${key2}"\``;
+            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(arrayTypes,key2,isReferenceType) + jsonType;
             goStruct += "\n" + templatedKeyValue
         }
         goStruct += `\n}\n\n`;
@@ -192,9 +206,9 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
 
 
     console.debug(value);
-    const structCandidates = makeStructMap(value, rootStructName, goFloat64);
-    console.debug(structCandidates);
-    const goStruct = constructGoType(structCandidates);
+    const {goStructCandidate,omitemptyMember} = makeStructMap(value, rootStructName, goFloat64);
+    console.debug(goStructCandidate);
+    const goStruct = constructGoType(goStructCandidate,omitemptyMember);
 
     return {
         // value: `type ${rootStructName} struct {
