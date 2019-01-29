@@ -8,6 +8,18 @@ function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
         finalType = "null"
     } else if (any && any.constructor == Array) {
         finalType = "array";
+
+        if(any.length > 0 ){
+            const first = any[0];
+            let x = typeof first;
+            if(x == "number"){
+                x = Number.isInteger(first)? "int" : goFloat64 ? "float64" : "float32"
+            }
+            finalType += ("_" + x)
+        }else{
+            finalType += "_empty"
+        }
+
         // if (recursiveDebt > 1) {
         //     return finalType;
         // }

@@ -51,7 +51,7 @@ function makeStructMap(obj, structName, goFloat64 = true) {
             if (type == "object") {
                 parseMap(value, layer + 1, parsedKey);
                 addToGoStructCandidate(key, Object.keys(value))
-            } else if (type == "array") {
+            } else if (type.includes("array")) {
                 value.forEach(v => {
                     if (analyseType(v) == "object") {
                         parseMap(v, layer + 1, parsedKey);
@@ -92,7 +92,6 @@ function makeStructMap(obj, structName, goFloat64 = true) {
 
             });
         }
-        console.log(goStructCandidate)
     })();
 
 
