@@ -69,10 +69,31 @@ function makeStructMap(obj, structName, goFloat64 = true) {
 
     (function combinedGoStructCandidateMember() {
         Object.keys(goStructCandidate).forEach(key =>{
-            goStructCandidate[key] = Array.from( new Set(flattenDeep(goStructCandidate[key])));
+            let typeMap = {};
+            (new Set(flattenDeep(goStructCandidate[key]))).forEach(x => {typeMap[x] = [] });
+            goStructCandidate[key] = typeMap;
         })
     })();
 
+    (function fillingTypeToGoStructCandidateMember() {
+
+        const keyList = getSortedKey(layers);
+        const keys = keyList.reverse().slice(0,keyList.length-1);
+        for( const key of keys ){
+            layers[key].forEach(x => {
+                let keyStr = x[0];
+                let keyStrArray =  keyStr.split(/[,\)]/g).filter(x => x != "");
+                let goStructName = keyStrArray[keyStrArray.length - 2 ];
+                let memberName= keyStrArray[keyStrArray.length - 1 ];
+                let type = x[1];
+                if(!goStructCandidate[goStructName][memberName].includes(type)){
+                    goStructCandidate[goStructName][memberName].push(type);
+                }
+
+            });
+        }
+        console.log(goStructCandidate)
+    })();
 
 
     return layers
