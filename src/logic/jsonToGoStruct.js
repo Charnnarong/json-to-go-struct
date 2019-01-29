@@ -94,12 +94,6 @@ function makeStructMap(obj, structName, goFloat64 = true) {
         }
     })();
 
-    // const objectKeySignature = {}; // goStructCandidate's {key : [members' names] }
-    // Object.keys(goStructCandidate).forEach(k => {
-    //     objectKeySignature[k] = Object.keys(goStructCandidate[k]);
-    // });
-
-
     return goStructCandidate
 }
 
@@ -107,9 +101,27 @@ function flattenDeep(arr) {
     return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
 }
 
-function makeGoType(str) {
+function makeGoType(arrayTypes,key) {
+    const userDefinedType = makeGoStructVariable(key);
+    if(arrayTypes.length == 1){
+        switch (arrayTypes[0]) {
+            case "array_object": return `[]${userDefinedType}`;
+            case "object": return userDefinedType+"";
+            case "boolean": return `bool`;
+            case "array_int": return `[]int`;
+            case "array_string": return `[]string`;
+            case "array_float32": return `[]float32`;
+            case "array_float64": return `[]float64`;
+            case "array_empty": return `[]interface{}`;
+            case "null": return `interface{}`;
+        }
+        return arrayTypes[0];
+    }
+    if(arrayTypes.includes("array_object")){
+        return `[]${userDefinedType}`;
+    }
 
-    return str.replace(/array_/g, '[]');
+    return "interface{}"
 }
 
 /**
@@ -130,8 +142,7 @@ function makeGoStructVariable__Deprecate(key) {
 }
 
 function makeGoStructVariable(s) {
-
-    return upperFirstLetter(s)
+    return s.split("_").map(x => upperFirstLetter(x)).join("");
 
 }
 
@@ -150,7 +161,7 @@ function constructGoType(candidates) {
         for (const key2 of values) {
             // key2 = member name
             const arrayTypes = candidates[key][key2];
-            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(arrayTypes[0]) + `\t\`json:"${key2}"\``;
+            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(arrayTypes,key2) + `\t\`json:"${key2}"\``;
             goStruct += "\n" + templatedKeyValue
         }
         goStruct += `\n}\n\n`;

@@ -1,11 +1,11 @@
 type Abc struct {
-Item    []Item `json:"item"`
-Name    int     `json:"name"`
-Surname float64 `json:"surname"`
+	Name    int     `json:"name"`
+	Surname float64 `json:"surname"`
+	Item    []Item  `json:"item"`
 }
 
 type Item struct {
-A int `json:"a,omitempty"`
-B int `json:"b,omitempty"`
-C int `json:"c,omitempty"`
+    B int `json:"b,omitempty"`
+    A int `json:"a,omitempty"`
+    C int `json:"c,omitempty"`
 }
