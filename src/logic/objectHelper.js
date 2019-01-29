@@ -9,14 +9,19 @@ function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
     } else if (any && any.constructor == Array) {
         finalType = "array";
 
-        if(any.length > 0 ){
+        if (any.length > 0) {
             const first = any[0];
             let x = typeof first;
-            if(x == "number"){
-                x = Number.isInteger(first)? "int" : goFloat64 ? "float64" : "float32"
+            if (x == "number") {
+                x = Number.isInteger(first) ? "int" : goFloat64 ? "float64" : "float32";
+                finalType += "_" + x;
+            } else if (first && x == 'object' && first.constructor != Array) {
+                finalType += "_object(" + Object.keys(first) + ")";
+            } else {
+
+                finalType += ("_" + x)
             }
-            finalType += ("_" + x)
-        }else{
+        } else {
             finalType += "_empty"
         }
 

@@ -94,8 +94,12 @@ function makeStructMap(obj, structName, goFloat64 = true) {
         }
     })();
 
+    const objectKeySignature = {}; // goStructCandidate's {key : [members' names] }
+    Object.keys(goStructCandidate).forEach(k => {
+        objectKeySignature[k] = Object.keys(goStructCandidate[k]);
+    });
 
-    return layers
+    return goStructCandidate
 }
 
 function flattenDeep(arr) {
