@@ -94,10 +94,11 @@ function makeStructMap(obj, structName, goFloat64 = true) {
         }
     })();
 
-    const objectKeySignature = {}; // goStructCandidate's {key : [members' names] }
-    Object.keys(goStructCandidate).forEach(k => {
-        objectKeySignature[k] = Object.keys(goStructCandidate[k]);
-    });
+    // const objectKeySignature = {}; // goStructCandidate's {key : [members' names] }
+    // Object.keys(goStructCandidate).forEach(k => {
+    //     objectKeySignature[k] = Object.keys(goStructCandidate[k]);
+    // });
+
 
     return goStructCandidate
 }
@@ -120,7 +121,7 @@ function makeGoType(str) {
  *
  * @param key2
  */
-function makeGoStructVariable(key) {
+function makeGoStructVariable__Deprecate(key) {
 
     let s = key.split(',');
 
@@ -128,23 +129,33 @@ function makeGoStructVariable(key) {
 
 }
 
+function makeGoStructVariable(s) {
+
+    return upperFirstLetter(s)
+
+}
+
 /**
  * @param structMap e.g { Abc: { name: 'string' , surname: 'string' } }
  * @returns {undefined}
  */
-function constructGoType(structMap) {
+function constructGoType(candidates) {
 
     let result = '';
-    for (const key of getSortedKey(structMap)) {
-        let goStruct = `type ${key} struct {`;
-        const values = structMap[key];
-        for (const key2 of getSortedKey(values)) {
-            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(values[key2]) + `\t\`json:"${key2}"\``;
+    Object.keys(candidates).forEach(key =>{
+        // parent layer
+        let goStruct = `type ${makeGoStructVariable(key)} struct {`;
+        const values = Object.keys(candidates[key]);
+
+        for (const key2 of values) {
+            // key2 = member name
+            const arrayTypes = candidates[key][key2];
+            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(arrayTypes[0]) + `\t\`json:"${key2}"\``;
             goStruct += "\n" + templatedKeyValue
         }
-        goStruct += `\n}`;
+        goStruct += `\n}\n\n`;
         result += goStruct
-    }
+    });
     return result;
 }
 
@@ -170,9 +181,9 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
 
 
     console.debug(value);
-    const layers = makeStructMap(value, rootStructName, goFloat64);
-    console.debug(layers);
-    const goStruct = constructGoType(layers);
+    const structCandidates = makeStructMap(value, rootStructName, goFloat64);
+    console.debug(structCandidates);
+    const goStruct = constructGoType(structCandidates);
 
     return {
         // value: `type ${rootStructName} struct {

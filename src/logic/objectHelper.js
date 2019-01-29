@@ -16,7 +16,8 @@ function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
                 x = Number.isInteger(first) ? "int" : goFloat64 ? "float64" : "float32";
                 finalType += "_" + x;
             } else if (first && x == 'object' && first.constructor != Array) {
-                finalType += "_object(" + Object.keys(first) + ")";
+                // finalType += "_object(" + Object.keys(first) + ")";
+                finalType += "_object";
             } else {
 
                 finalType += ("_" + x)
