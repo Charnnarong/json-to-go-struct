@@ -23,13 +23,16 @@ class UserInputPanel extends Component {
     };
 
     render() {
+
+        const textHeight = this.props.vh - 1;
         return (
 
             <div className="userInputPanel">
-                <p>Input Json</p>
-                <input value={this.state.mainStructName} onChange={this.handleNameChange}/>
+
                 <textarea value={this.state.jsonString}
                           onChange={this.handleChange}
+                          style={{height: `${textHeight}vh`,
+                          }}
                 />
             </div>
         )

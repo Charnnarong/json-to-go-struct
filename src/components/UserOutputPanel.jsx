@@ -12,12 +12,13 @@ function UserOutputPanel(props) {
         result = values["value"];
     }
 
-
+    const textHeight = props.vh - 1;
 
     return (
         <div className="userOutputPanel">
-            <p>Output Json</p>
-            <textarea value={result} readOnly={true}/>
+            <textarea value={result} readOnly={true}
+                      style={{height: `${textHeight}vh`}}
+            />
         </div>
     )
 

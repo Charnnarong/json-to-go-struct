@@ -1,10 +1,17 @@
 .userInputPanel{
-
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: .5rem;
   textarea{
     background-color: aliceblue;
-    width: 95%;
-    max-width: 95%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
     height: 100%;
-    margin-left: .5rem;
+    padding: 1rem;
+    white-space: pre;
   }
 }
