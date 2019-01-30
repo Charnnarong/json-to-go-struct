@@ -132,3 +132,11 @@ test("nestedComplex", () => {
 
     expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
 });
+
+test("startWithArray", () => {
+
+    const input = testResourceAsString("example/startWithArray/input.json");
+    const expected = testResourceAsString("example/startWithArray/output.text");
+
+    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
+});
