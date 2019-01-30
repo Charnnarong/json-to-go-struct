@@ -1,0 +1,12 @@
+type Item struct {
+A	int	`json:"a"`
+B	string	`json:"b"`
+Item	*Item	`json:"item,omitempty"`
+C	float64	`json:"c,omitempty"`
+}
+
+type Abc struct {
+A	int	`json:"a"`
+B	string	`json:"b"`
+Item	Item	`json:"item"`
+}

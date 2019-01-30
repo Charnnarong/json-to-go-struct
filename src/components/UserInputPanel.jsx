@@ -6,7 +6,7 @@ class UserInputPanel extends Component {
         super(props)
         this.state = {
             jsonString: '',
-            mainStructName: 'YourStructNameHere'
+            mainStructName: ''
         }
     }
 

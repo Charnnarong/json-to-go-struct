@@ -4,66 +4,85 @@ function getSortedKey(obj) {
 
 function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
     let finalType = 'object';
-
-    if (any.constructor == Array) {
+    if (any == null) {
+        finalType = "null"
+    } else if (any && any.constructor == Array) {
         finalType = "array";
-        if (recursiveDebt > 1) {
-            return finalType;
-        }
 
-        let arrayType = "any";
-        const typesSet = new Set();
-        for (let i = 0; i < any.length; i++) {
-            arrayType = analyseType(any[i], recursiveDebt + 1);
-            typesSet.add(arrayType)
-        }
+        if (any.length > 0) {
+            const first = any[0];
+            let x = typeof first;
+            if (x == "number") {
+                x = Number.isInteger(first) ? "int" : goFloat64 ? "float64" : "float32";
+                finalType += "_" + x;
+            } else if (first && x == 'object' && first.constructor != Array) {
+                // finalType += "_object(" + Object.keys(first) + ")";
+                finalType += "_object";
+            } else {
 
-        if (typesSet.size == 1) {
-            arrayType = typesSet.values().next().value;
-        }
-        else if (typesSet.size == 2) {
-            let int = '';
-            let float = '';
-
-            typesSet.forEach((value1, value2, set) => {
-                if (value1.includes("int")) {
-                    int = value1
-                }
-                if (value1.includes("float")) {
-                    float = value1
-                }
-            });
-
-            if (int && float) {
-                arrayType = float;
+                finalType += ("_" + x)
             }
-            // else{
-            //     arrayType = "any"
-            // }
         } else {
-            let int = ''
-            let float = ''
-            let string = ''
-
-            typesSet.forEach((value1, value2, set) => {
-                if (value1.includes("int")) {
-                    int = value1
-                }
-                if (value1.includes("float")) {
-                    float = value1
-                }
-                if (value1.includes("string")) {
-                    string = value1
-                }
-            });
-
-            if (int && float && string) {
-                arrayType = string.replace("string","any");
-            }
+            finalType += "_empty"
         }
 
-
-        finalType += ("_" + arrayType)
+        // if (recursiveDebt > 1) {
+        //     return finalType;
+        // }
+        //
+        // let arrayType = "any";
+        // const typesSet = new Set();
+        // for (let i = 0; i < any.length; i++) {
+        //     arrayType = analyseType(any[i], recursiveDebt + 1);
+        //     typesSet.add(arrayType)
+        // }
+        //
+        // if (typesSet.size == 1) {
+        //     arrayType = typesSet.values().next().value;
+        // }
+        // else if (typesSet.size == 2) {
+        //     let int = '';
+        //     let float = '';
+        //
+        //     typesSet.forEach((value1, value2, set) => {
+        //         if (value1.includes("int")) {
+        //             int = value1
+        //         }
+        //         if (value1.includes("float")) {
+        //             float = value1
+        //         }
+        //     });
+        //
+        //     if (int && float) {
+        //         arrayType = float;
+        //     }
+        //     // else{
+        //     //     arrayType = "any"
+        //     // }
+        // } else {
+        //     let int = ''
+        //     let float = ''
+        //     let string = ''
+        //
+        //     typesSet.forEach((value1, value2, set) => {
+        //         if (value1.includes("int")) {
+        //             int = value1
+        //         }
+        //         if (value1.includes("float")) {
+        //             float = value1
+        //         }
+        //         if (value1.includes("string")) {
+        //             string = value1
+        //         }
+        //     });
+        //
+        //     if (int && float && string) {
+        //         arrayType = string.replace("string","any");
+        //     }
+        // }
+        //
+        //
+        // finalType += ("_" + arrayType)
     }
 
     return finalType;
@@ -76,15 +95,15 @@ function analyseNumberType(any, goFloat64 = true) {
 
 function analyseType(any, recursiveDebt = 0, goFloat64 = true) {
     const basicType = typeof(any);
-    let finalType = basicType;
+    // let finalType = basicType;
 
-    switch (finalType) {
+    switch (basicType) {
         case "object" :
             return analyseObjectType(any, recursiveDebt);
         case "number" :
             return analyseNumberType(any, goFloat64);
         default :
-            return finalType;
+            return basicType;
     }
 }
 

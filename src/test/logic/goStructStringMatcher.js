@@ -78,8 +78,8 @@ function parseGoStructTextToJsonObject(receivedElement) {
         if (memberJsonNameStack.length == 0) {
             memberJsonNameStack.push(token);
 
-            let memberMeta = {"type": memberTypeStack.pop(), "key": memberJsonNameStack.pop()};
-            let memberKey = memberKeyStack.pop();
+            const memberMeta = {"type": memberTypeStack.pop(), "key": memberJsonNameStack.pop()};
+            const memberKey = memberKeyStack.pop();
             memberItem[memberKey] = memberMeta;
             return;
 

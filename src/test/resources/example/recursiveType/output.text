@@ -3,8 +3,8 @@ Item []Item `json:"item"`
 }
 
 type Item struct {
-A    int     `json:"a,omitempty"`
-B    string  `json:"b,omitempty"`
+A    int     `json:"a"`
+B    string  `json:"b"`
 C    float64 `json:"c,omitempty"`
-Item *Item    `json:"item"`
+Item *Item    `json:"item,omitempty"`
 }

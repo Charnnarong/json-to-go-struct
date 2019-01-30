@@ -14,79 +14,140 @@ function parseJson(json) {
     }
 }
 
-
-function increaseKeyCount(objMapKeyCount, key , additionKey) {
-    let additionKeyCount = 0;
-
-    if(additionKey && additionKey.hasOwnProperty(key)){
-        additionKeyCount = additionKey[key];
-    }
-
-    if(objMapKeyCount.hasOwnProperty(key)){
-        objMapKeyCount[key] = objMapKeyCount[key] + 1 + additionKeyCount;
-    }else{
-        objMapKeyCount[key] = 1 + additionKeyCount;
-    }
-}
-
 function makeStructMap(obj, structName, goFloat64 = true) {
 
-    let objMap = {};
-    let objMapKeyCount = {};
+    let layers = {};
+    let goStructCandidate = {}; // {  name: [ signature1, signature2, ..... signatureN ] }
+    let omitemptyMember = {};
 
-    let structSignature = {};
-    const objType = analyseType(obj, goFloat64);
+    function makeParseKey(prefixKey, key) {
+        return `(${prefixKey},${key})`;
+    }
 
-    if (objType == 'object') {
-        for (const key of getSortedKey(obj)) {
-            let keyType = analyseType(obj[key], goFloat64);
-            if (keyType == 'array_object') {
-                const subTypeKey = upperFirstLetter(key);
-                keyType = 'array_' + subTypeKey;
-                let [subType, subTypeKeyCount] = makeStructMap(obj[key], subTypeKey, goFloat64);
-                objMap[subTypeKey] = subType[subTypeKey];
-                increaseKeyCount(objMapKeyCount,subTypeKey,subTypeKeyCount)
+    function addToGoStructCandidate(key, arrayOfStringValue) {
+        if (goStructCandidate.hasOwnProperty(key)) {
+            goStructCandidate[key].push(arrayOfStringValue);
+        } else {
+            goStructCandidate[key] = [arrayOfStringValue];
+        }
+    }
+
+    function parseMap(jsonObj, layer, prefixKey) {
+        if (jsonObj == null) {
+            return;
+        }
 
 
+        for (const key of getSortedKey(jsonObj)) {
+            const value = jsonObj[key];
+            const type = analyseType(value);
+            const parsedKey = makeParseKey(prefixKey, key);
+
+            if (layers.hasOwnProperty(layer)) {
+                layers[layer].push([parsedKey, type])
+            } else {
+                layers[layer] = [[parsedKey, type]]
             }
-            else if (keyType == 'object'){
-                // Add to the root
-                const subTypeKey = upperFirstLetter(key);
-                keyType = subTypeKey;
-                let [subType, subTypeKeyCount] = makeStructMap(obj[key], subTypeKey, goFloat64);
-                objMap[subTypeKey] = subType[subTypeKey];
-                increaseKeyCount(objMapKeyCount,subTypeKey,subTypeKeyCount);
-                // iterate through object items
-                for(const key2 of getSortedKey(obj[key])){
-                    const key2Go = upperFirstLetter(key2);
-                    let [subType2,subTypeKeyCount] = makeStructMap(obj[key][key2] , key2Go, goFloat64);
-                    objMap[key2Go] = subType2[key2Go];
-                    increaseKeyCount(objMapKeyCount,key2Go,subTypeKeyCount);
+
+            if (type == "object") {
+                parseMap(value, layer + 1, parsedKey);
+                addToGoStructCandidate(key, Object.keys(value))
+            } else if (type.includes("array")) {
+                value.forEach(v => {
+                    if (analyseType(v) == "object") {
+                        parseMap(v, layer + 1, parsedKey);
+                        addToGoStructCandidate(key, Object.keys(v));
+                    }
+                });
+            }
+
+        }
+    }
+
+    let wrapper = {};
+    wrapper[structName] = obj;
+    parseMap(wrapper, 0, "");
+
+    (function combinedGoStructCandidateMember() {
+        Object.keys(goStructCandidate).forEach(key => {
+            let typeMap = {};
+            let memberCount = {};
+            let flattenCandidateMember = flattenDeep(goStructCandidate[key]);
+            flattenCandidateMember.forEach(x => {
+                if (memberCount[x]) {
+                    memberCount[x] = memberCount[x] + 1;
+                } else {
+                    memberCount[x] = 1;
                 }
-            }
-            structSignature[key] = keyType;
-        }
-    }
-    else if (objType == 'array_object') {
-        // let signature = {};
-        for (let i = 0; i < obj.length; i++) {
-            for (const key of getSortedKey(obj[i])) {
-                let keyType = analyseType(obj[i][key], goFloat64);
-                structSignature[key + ",omitempty"] = keyType
-            }
-        }
-        // structSignature['x'] =  'xxxx';
-    }
+            });
+            Object.keys(memberCount).map(k => {
+                memberCount[k] = memberCount[k] < goStructCandidate[key].length
+            });
+            omitemptyMember[key] = memberCount;
+            (new Set(flattenCandidateMember)).forEach(x => {
+                typeMap[x] = []
+            });
+            goStructCandidate[key] = typeMap;
+        })
+    })();
 
-    objMap[structName] = structSignature;
-    increaseKeyCount(objMapKeyCount,structName);
+    (function fillingTypeToGoStructCandidateMember() {
 
-    return [objMap , objMapKeyCount];
+        const keyList = getSortedKey(layers);
+        const keys = keyList.reverse().slice(0, keyList.length - 1);
+        for (const key of keys) {
+            layers[key].forEach(x => {
+                let keyStr = x[0];
+                let keyStrArray = keyStr.split(/[,\)]/g).filter(x => x != "");
+                let goStructName = keyStrArray[keyStrArray.length - 2];
+                let memberName = keyStrArray[keyStrArray.length - 1];
+                let type = x[1];
+                if (!goStructCandidate[goStructName][memberName].includes(type)) {
+                    goStructCandidate[goStructName][memberName].push(type);
+                }
+
+            });
+        }
+    })();
+
+    let rootType = layers["0"][0][1];
+    return {goStructCandidate, omitemptyMember, rootType};
 }
 
-function makeGoType(str) {
+function flattenDeep(arr) {
+    return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
+}
 
-    return str.replace(/array_/g, '[]');
+function makeGoType(arrayTypes, key, isReferenceType) {
+    const userDefinedType = makeGoStructVariable(key);
+    if (arrayTypes.length == 1) {
+        switch (arrayTypes[0]) {
+            case "array_object":
+                return `[]${userDefinedType}`;
+            case "object":
+                return isReferenceType ? "*" + userDefinedType : userDefinedType;
+            case "boolean":
+                return `bool`;
+            case "array_int":
+                return `[]int`;
+            case "array_string":
+                return `[]string`;
+            case "array_float32":
+                return `[]float32`;
+            case "array_float64":
+                return `[]float64`;
+            case "array_empty":
+                return `[]interface{}`;
+            case "null":
+                return `interface{}`;
+        }
+        return arrayTypes[0];
+    }
+    if (arrayTypes.includes("array_object")) {
+        return `[]${userDefinedType}`;
+    }
+
+    return "interface{}"
 }
 
 /**
@@ -98,7 +159,7 @@ function makeGoType(str) {
  *
  * @param key2
  */
-function makeGoStructVariable(key) {
+function makeGoStructVariable__Deprecate(key) {
 
     let s = key.split(',');
 
@@ -106,23 +167,87 @@ function makeGoStructVariable(key) {
 
 }
 
+function makeGoStructVariable(s) {
+    return s.split("_").map(x => upperFirstLetter(x)).join("");
+
+}
+
+// https://github.com/golang/lint/blob/8f45f776aaf18cebc8d65861cc70c33c60471952/lint.go#L771
+const commonInitialisms = {
+    "ACL": true,
+    "API": true,
+    "ASCII": true,
+    "CPU": true,
+    "CSS": true,
+    "DNS": true,
+    "EOF": true,
+    "GUID": true,
+    "HTML": true,
+    "HTTP": true,
+    "HTTPS": true,
+    "ID": true,
+    "IP": true,
+    "JSON": true,
+    "LHS": true,
+    "QPS": true,
+    "RAM": true,
+    "RHS": true,
+    "RPC": true,
+    "SLA": true,
+    "SMTP": true,
+    "SQL": true,
+    "SSH": true,
+    "TCP": true,
+    "TLS": true,
+    "TTL": true,
+    "UDP": true,
+    "UI": true,
+    "UID": true,
+    "UUID": true,
+    "URI": true,
+    "URL": true,
+    "UTF8": true,
+    "VM": true,
+    "XML": true,
+    "XMPP": true,
+    "XSRF": true,
+    "XSS": true,
+};
+
+function makeCommonInitialisms(camelStr) {
+    return camelStr.replace(/([a-z0-9])([A-Z])/g,"$1 $2").split(" ").map(x => {
+        const upperX = x.toUpperCase();
+        return commonInitialisms.hasOwnProperty(upperX) ? upperX : x;
+    } ).join("");
+
+}
+
 /**
  * @param structMap e.g { Abc: { name: 'string' , surname: 'string' } }
  * @returns {undefined}
  */
-function constructGoType(structMap) {
+function constructGoType(candidates, omitemptyMember, rootType, rootStructName) {
 
     let result = '';
-    for (const key of getSortedKey(structMap)) {
-        let goStruct = `type ${key} struct {`;
-        const values = structMap[key];
-        for (const key2 of getSortedKey(values)) {
-            const templatedKeyValue = makeGoStructVariable(key2) + "\t" + makeGoType(values[key2]) + `\t\`json:"${key2}"\``;
-            goStruct += "\n" + templatedKeyValue
+    Object.keys(candidates).forEach(key => {
+        // parent layer
+
+        let goStruct = (key == rootStructName && rootType.includes("array_")) ? `type ${makeGoStructVariable(key)} []struct {` : `type ${makeGoStructVariable(key)} struct {`;
+        // let goStruct = `type ${makeGoStructVariable(key)} struct {`;
+        const values = Object.keys(candidates[key]);
+
+        for (const key2 of values) {
+            // key2 = member name
+            const arrayTypes = candidates[key][key2];
+            const isReferenceType = key == key2;
+            const goType = makeGoType(arrayTypes, key2, isReferenceType);
+            const jsonType = (!goType.includes("interface")) && omitemptyMember[key][key2] ? `\t\`json:"${key2},omitempty"\`` : `\t\`json:"${key2}"\``;
+            const templatedKeyValue = makeCommonInitialisms(makeGoStructVariable(key2)) + "\t" + makeGoType(arrayTypes, key2, isReferenceType) + jsonType;
+            goStruct += "\n  " + templatedKeyValue
         }
-        goStruct += `\n}`;
+        goStruct += `\n}\n\n`;
         result += goStruct
-    }
+    });
     return result;
 }
 
@@ -139,7 +264,7 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
         return {value, err}
     }
 
-    const rootStructName = upperFirstLetter(structName);
+    const rootStructName = makeGoStructVariable(structName);
 
     // check empty object
     if (Object.keys(value).length == 0) {
@@ -148,10 +273,9 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
 
 
     console.debug(value);
-    const [structMap, structMapKeyCount] = makeStructMap(value, rootStructName, goFloat64);
-    console.debug(structMap);
-    console.debug(structMapKeyCount);
-    const goStruct = constructGoType(structMap);
+    const {goStructCandidate, omitemptyMember, rootType} = makeStructMap(value, rootStructName, goFloat64);
+    console.debug(goStructCandidate);
+    const goStruct = constructGoType(goStructCandidate, omitemptyMember, rootType, rootStructName);
 
     return {
         // value: `type ${rootStructName} struct {
