@@ -1,15 +1,15 @@
 type Urls struct {
-	Url         string `json:"url"`
-	ExpandedUrl string `json:"expanded_url"`
-	DisplayUrl  string `json:"display_url"`
+	URL         string `json:"url"`
+	ExpandedURL string `json:"expanded_url"`
+	DisplayURL  string `json:"display_url"`
 	Indices     []int  `json:"indices"`
 }
 
 type UserMentions struct {
 	ScreenName string `json:"screen_name"`
 	Name       string `json:"name"`
-	Id         int    `json:"id"`
-	IdStr      string `json:"id_str"`
+	ID         int    `json:"id"`
+	IDStr      string `json:"id_str"`
 	Indices    []int  `json:"indices"`
 }
 
@@ -18,7 +18,7 @@ type Entities struct {
 	Symbols      []interface{}  `json:"symbols"`
 	UserMentions []UserMentions `json:"user_mentions,omitempty"`
 	Urls         []Urls         `json:"urls,omitempty"`
-	Url          Url            `json:"url,omitempty"`
+	URL          Url            `json:"url,omitempty"`
 	Description  Description    `json:"description,omitempty"`
 }
 
@@ -31,13 +31,13 @@ type Url struct {
 }
 
 type User struct {
-	Id                             int      `json:"id"`
-	IdStr                          string   `json:"id_str"`
+	ID                             int      `json:"id"`
+	IDStr                          string   `json:"id_str"`
 	Name                           string   `json:"name"`
 	ScreenName                     string   `json:"screen_name"`
 	Location                       string   `json:"location"`
 	Description                    string   `json:"description"`
-	Url                            string   `json:"url"`
+	URL                            string   `json:"url"`
 	Entities                       Entities `json:"entities"`
 	Protected                      bool     `json:"protected"`
 	FollowersCount                 int      `json:"followers_count"`
@@ -55,12 +55,12 @@ type User struct {
 	IsTranslator                   bool     `json:"is_translator"`
 	IsTranslationEnabled           bool     `json:"is_translation_enabled"`
 	ProfileBackgroundColor         string   `json:"profile_background_color"`
-	ProfileBackgroundImageUrl      string   `json:"profile_background_image_url"`
-	ProfileBackgroundImageUrlHttps string   `json:"profile_background_image_url_https"`
+	ProfileBackgroundImageURL      string   `json:"profile_background_image_url"`
+	ProfileBackgroundImageURLHTTPS string   `json:"profile_background_image_url_https"`
 	ProfileBackgroundTile          bool     `json:"profile_background_tile"`
-	ProfileImageUrl                string   `json:"profile_image_url"`
-	ProfileImageUrlHttps           string   `json:"profile_image_url_https"`
-	ProfileBannerUrl               string   `json:"profile_banner_url"`
+	ProfileImageURL                string   `json:"profile_image_url"`
+	ProfileImageURLHTTPS           string   `json:"profile_image_url_https"`
+	ProfileBannerURL               string   `json:"profile_banner_url"`
 	ProfileLinkColor               string   `json:"profile_link_color"`
 	ProfileSidebarBorderColor      string   `json:"profile_sidebar_border_color"`
 	ProfileSidebarFillColor        string   `json:"profile_sidebar_fill_color"`
@@ -77,16 +77,16 @@ type User struct {
 
 type RetweetedStatus struct {
 	CreatedAt            string      `json:"created_at"`
-	Id                   int         `json:"id"`
-	IdStr                string      `json:"id_str"`
+	ID                   int         `json:"id"`
+	IDStr                string      `json:"id_str"`
 	Text                 string      `json:"text"`
 	Truncated            bool        `json:"truncated"`
 	Entities             Entities    `json:"entities"`
 	Source               string      `json:"source"`
-	InReplyToStatusId    interface{} `json:"in_reply_to_status_id"`
-	InReplyToStatusIdStr interface{} `json:"in_reply_to_status_id_str"`
-	InReplyToUserId      interface{} `json:"in_reply_to_user_id"`
-	InReplyToUserIdStr   interface{} `json:"in_reply_to_user_id_str"`
+	InReplyToStatusID    interface{} `json:"in_reply_to_status_id"`
+	InReplyToStatusIDStr interface{} `json:"in_reply_to_status_id_str"`
+	InReplyToUserID      interface{} `json:"in_reply_to_user_id"`
+	InReplyToUserIDStr   interface{} `json:"in_reply_to_user_id_str"`
 	InReplyToScreenName  interface{} `json:"in_reply_to_screen_name"`
 	User                 User        `json:"user"`
 	Geo                  interface{} `json:"geo"`
@@ -104,16 +104,16 @@ type RetweetedStatus struct {
 
 type Abc []struct {
 	CreatedAt            string          `json:"created_at"`
-	Id                   int             `json:"id"`
-	IdStr                string          `json:"id_str"`
+	ID                   int             `json:"id"`
+	IDStr                string          `json:"id_str"`
 	Text                 string          `json:"text"`
 	Truncated            bool            `json:"truncated"`
 	Entities             Entities        `json:"entities"`
 	Source               string          `json:"source"`
-	InReplyToStatusId    interface{}     `json:"in_reply_to_status_id"`
-	InReplyToStatusIdStr interface{}     `json:"in_reply_to_status_id_str"`
-	InReplyToUserId      interface{}     `json:"in_reply_to_user_id"`
-	InReplyToUserIdStr   interface{}     `json:"in_reply_to_user_id_str"`
+	InReplyToStatusID    interface{}     `json:"in_reply_to_status_id"`
+	InReplyToStatusIDStr interface{}     `json:"in_reply_to_status_id_str"`
+	InReplyToUserID      interface{}     `json:"in_reply_to_user_id"`
+	InReplyToUserIDStr   interface{}     `json:"in_reply_to_user_id_str"`
 	InReplyToScreenName  interface{}     `json:"in_reply_to_screen_name"`
 	User                 User            `json:"user"`
 	Geo                  interface{}     `json:"geo"`
