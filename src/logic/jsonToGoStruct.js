@@ -243,7 +243,7 @@ function constructGoType(candidates, omitemptyMember, rootType, rootStructName) 
             const goType = makeGoType(arrayTypes, key2, isReferenceType);
             const jsonType = (!goType.includes("interface")) && omitemptyMember[key][key2] ? `\t\`json:"${key2},omitempty"\`` : `\t\`json:"${key2}"\``;
             const templatedKeyValue = makeCommonInitialisms(makeGoStructVariable(key2)) + "\t" + makeGoType(arrayTypes, key2, isReferenceType) + jsonType;
-            goStruct += "\n" + templatedKeyValue
+            goStruct += "\n  " + templatedKeyValue
         }
         goStruct += `\n}\n\n`;
         result += goStruct
