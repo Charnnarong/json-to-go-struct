@@ -1,4 +1,4 @@
 type Abc struct {
 Name int `json:"name"`
-Surname float64 `json:"surname"`
+Surname float32 `json:"surname"`
 }

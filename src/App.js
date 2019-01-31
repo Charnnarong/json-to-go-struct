@@ -1,43 +1,51 @@
 import React, {Component} from 'react';
 import './scss/main.scss'
-import SplitHorizontal from './components/SplitHorizontal'
-import SplitVertical from './components/SplitVertical'
-import UserOutputPanel from './components/UserOutputPanel'
-import UserInputPanel from './components/UserInputPanel'
-import Head from './components/Head'
+import Header from "./components/Header";
+import Menu from "./components/Menu";
+import Editor from "./components/Editor";
+import jsonToGoStruct from "./logic/jsonToGoStruct";
+
 
 class App extends Component {
 
-    constructor(props){
-        super(props)
+    constructor(props) {
+        super(props);
         this.state = {
             jsonString: '',
-            mainStructName: ''
+            mainStructName: '',
+            isFloat32: false,
+            goStructResult: ''
         }
     }
 
-    onUserInput = (jsonString) =>{
-        this.setState({jsonString});
+
+    onMainStructNameChange = (mainStructName) => {
+
+        this.setState({mainStructName}, this.parseGoType);
     };
 
-    onMainStructNameChange  = (mainStructName) =>{
-        this.setState({mainStructName});
-    }
+    onFloat32Toggle = (isFloat32) => {
+        this.setState({isFloat32}, this.parseGoType);
+    };
+
+    onTextInputChange = (jsonString) => {
+        this.setState({jsonString}, this.parseGoType)
+    };
+
+    parseGoType = () => {
+        let goStructResult = '';
+        if (this.state.jsonString && this.state.mainStructName) {
+            goStructResult = jsonToGoStruct(this.state.jsonString, this.state.mainStructName, !this.state.isFloat32).value;
+        }
+        this.setState({goStructResult})
+    };
 
     render() {
         return (
             <div className="mainApp">
-                <SplitHorizontal topVh={20}>
-                    <Head/>
-                    <SplitVertical leftVw={50}>
-                        <UserInputPanel onTextAreaChange={this.onUserInput} onMainStructNameChange={this.onMainStructNameChange}>
-                            input
-                        </UserInputPanel>
-                        <UserOutputPanel jsonInput={this.state.jsonString} mainStructName={this.state.mainStructName}>
-                            output
-                        </UserOutputPanel>
-                    </SplitVertical>
-                </SplitHorizontal>
+                <Header/>
+                <Menu onMainStructNameChange={this.onMainStructNameChange} onFloat32Toggle={this.onFloat32Toggle}/>
+                <Editor onTextInputChange={this.onTextInputChange} goStructResult={this.state.goStructResult}/>
             </div>
         );
     }
