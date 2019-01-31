@@ -2,7 +2,7 @@ function getSortedKey(obj) {
     return Object.keys(obj).sort((a, b) => a.localeCompare(b))
 }
 
-function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
+function analyseObjectType(any, goFloat64) {
     let finalType = 'object';
     if (any == null) {
         finalType = "null"
@@ -89,17 +89,17 @@ function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
     return finalType;
 }
 
-function analyseNumberType(any, goFloat64 = true) {
+function analyseNumberType(any, goFloat64) {
 
     return Number.isInteger(any) ? "int" : goFloat64 ? "float64" : "float32";
 }
 
-function analyseType(any, recursiveDebt = 0, goFloat64 = true) {
+function analyseType(any,  goFloat64) {
     const basicType = typeof(any);
 
     switch (basicType) {
         case "object" :
-            return analyseObjectType(any, recursiveDebt);
+            return analyseObjectType(any,goFloat64);
         case "number" :
             return analyseNumberType(any, goFloat64);
         default :

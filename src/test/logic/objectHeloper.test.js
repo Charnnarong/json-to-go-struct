@@ -66,7 +66,11 @@ test("analyse Array of array of mixed Type ", () => {
 
 test("analyse Array of float Type ", () => {
     const x = [1,2.2,3];
-    expect(analyseType(x)).toEqual("array_float64");
+    expect(analyseType(x,true)).toEqual("array_float64");
+});
+test("analyse Array of float Type ", () => {
+    const x = [1,2.2,3];
+    expect(analyseType(x)).toEqual("array_float32");
 });
 
 test("analyse Array of string Type ", () => {
