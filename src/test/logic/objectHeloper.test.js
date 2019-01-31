@@ -39,9 +39,9 @@ test("analyse non empty Object", () => {
     expect(analyseType(x)).toEqual("object");
 });
 
-test("analyse Array of int Type ", () => {
+test("analyse empty array ", () => {
     const x = [];
-    expect(analyseType(x)).toEqual("array_any");
+    expect(analyseType(x)).toEqual("array_empty");
 });
 
 test("analyse Array of int Type ", () => {
@@ -51,17 +51,17 @@ test("analyse Array of int Type ", () => {
 
 test("analyse Array of array of int Type ", () => {
     const x = [[1],[2],[3]];
-    expect(analyseType(x)).toEqual("array_array_int");
+    expect(analyseType(x)).toEqual("array_object");
 });
 
 test("analyse Array of array of any Type ", () => {
     const x = [[1],[2.1],[3]];
-    expect(analyseType(x)).toEqual("array_array_float64");
+    expect(analyseType(x)).toEqual("array_object");
 });
 
 test("analyse Array of array of mixed Type ", () => {
     const x = [['sdf'],[34.4],[3]];
-    expect(analyseType(x)).toEqual("array_array_any");
+    expect(analyseType(x)).toEqual("array_object");
 });
 
 test("analyse Array of float Type ", () => {

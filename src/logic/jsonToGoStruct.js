@@ -272,9 +272,9 @@ function jsonToGoStruct(json, structName, goFloat64 = true) {
     }
 
 
-    console.debug(value);
+    // console.debug(value);
     const {goStructCandidate, omitemptyMember, rootType} = makeStructMap(value, rootStructName, goFloat64);
-    console.debug(goStructCandidate);
+    // console.debug(goStructCandidate);
     const goStruct = constructGoType(goStructCandidate, omitemptyMember, rootType, rootStructName);
 
     return {
