@@ -1,14 +1,13 @@
 {
-  "main.css": "/json-to-go-struct/static/css/main.f24b34c7.chunk.css",
-  "main.js": "/json-to-go-struct/static/js/main.0c21f6cd.chunk.js",
-  "main.js.map": "/json-to-go-struct/static/js/main.0c21f6cd.chunk.js.map",
+  "main.css": "/json-to-go-struct/static/css/main.4f8421c9.chunk.css",
+  "main.js": "/json-to-go-struct/static/js/main.44899b9b.chunk.js",
+  "main.js.map": "/json-to-go-struct/static/js/main.44899b9b.chunk.js.map",
   "static/js/1.f03e8ae8.chunk.js": "/json-to-go-struct/static/js/1.f03e8ae8.chunk.js",
   "static/js/1.f03e8ae8.chunk.js.map": "/json-to-go-struct/static/js/1.f03e8ae8.chunk.js.map",
   "runtime~main.js": "/json-to-go-struct/static/js/runtime~main.71fdf6cf.js",
   "runtime~main.js.map": "/json-to-go-struct/static/js/runtime~main.71fdf6cf.js.map",
-  "static/media/main.scss": "/json-to-go-struct/static/media/SourceCodePro-Regular.43bb4cbf.ttf",
-  "static/css/main.f24b34c7.chunk.css.map": "/json-to-go-struct/static/css/main.f24b34c7.chunk.css.map",
+  "static/css/main.4f8421c9.chunk.css.map": "/json-to-go-struct/static/css/main.4f8421c9.chunk.css.map",
   "index.html": "/json-to-go-struct/index.html",
-  "precache-manifest.bf5b25acdf8b0f359fddb40105614c81.js": "/json-to-go-struct/precache-manifest.bf5b25acdf8b0f359fddb40105614c81.js",
+  "precache-manifest.e5a50014833f38eca0450f7b967476bd.js": "/json-to-go-struct/precache-manifest.e5a50014833f38eca0450f7b967476bd.js",
   "service-worker.js": "/json-to-go-struct/service-worker.js"
 }
