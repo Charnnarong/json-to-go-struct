@@ -16,8 +16,8 @@ class UserInputPanel extends Component {
         });
 
     };
-    handleNameChange = (e) =>{
-        this.setState({mainStructName: e.target.value} , () => {
+    handleNameChange = (e) => {
+        this.setState({mainStructName: e.target.value}, () => {
             this.props.onMainStructNameChange(this.state.mainStructName)
         })
     };
@@ -31,7 +31,8 @@ class UserInputPanel extends Component {
 
                 <textarea value={this.state.jsonString}
                           onChange={this.handleChange}
-                          style={{height: `${textHeight}vh`,
+                          style={{
+                              height: `${textHeight}vh`,
                           }}
                 />
             </div>

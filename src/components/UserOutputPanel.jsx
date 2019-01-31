@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 
 import jsonToGoStruct from "../logic/jsonToGoStruct"
 
@@ -6,9 +6,9 @@ function UserOutputPanel(props) {
 
     let result = "";
 
-    if(props.mainStructName){
+    if (props.mainStructName) {
 
-        const values = jsonToGoStruct(props.jsonInput , props.mainStructName);
+        const values = jsonToGoStruct(props.jsonInput, props.mainStructName);
         result = values["value"];
     }
 

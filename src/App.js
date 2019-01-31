@@ -1,14 +1,5 @@
 import React, {Component} from 'react';
 import './scss/main.scss'
-import SplitHorizontal from './components/SplitHorizontal'
-import SplitVertical from './components/SplitVertical'
-import UserOutputPanel from './components/UserOutputPanel'
-import UserInputPanel from './components/UserInputPanel'
-import TopBanner from './components/TopBanner'
-import * as PropTypes from "prop-types";
-import UserInputMenu from "./components/UserInputMenu";
-
-
 
 
 class App extends Component {
@@ -33,15 +24,18 @@ class App extends Component {
     render() {
         return (
             <div className="mainApp">
-                <TopBanner vh={20}/>
-                <SplitHorizontal topVh={10} bottomVh={70}>
-                    <UserInputMenu/>
-                    <SplitVertical leftVw={50}>
-                        <UserInputPanel onTextAreaChange={this.onUserInput}
-                                        onMainStructNameChange={this.onMainStructNameChange} vh={70}/>
-                        <UserOutputPanel jsonInput={this.state.jsonString} mainStructName={this.state.mainStructName} vh={70}/>
-                    </SplitVertical>
-                </SplitHorizontal>
+                <div className="header">
+                    <p>THis is header</p>
+                </div>
+                <div className="menu">
+                    <p>this is menu</p>
+                </div>
+                <div className="editor">
+                    <div className="editor__text_areas">
+                        <textarea className="editor__text_areas--input"></textarea>
+                        <textarea className="editor__text_areas--output"></textarea>
+                    </div>
+                </div>
             </div>
         );
     }
