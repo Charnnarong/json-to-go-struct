@@ -13,7 +13,8 @@ function analyseObjectType(any, recursiveDebt = 0, goFloat64 = true) {
             const first = any[0];
             let x = typeof first;
             if (x == "number") {
-                x = Number.isInteger(first) ? "int" : goFloat64 ? "float64" : "float32";
+                const hasFloat = any.reduce((foundFloat, x) => { return foundFloat || !Number.isInteger(x)} , false);
+                x = hasFloat ? (goFloat64 ? "float64" : "float32") : "int";
                 finalType += "_" + x;
             } else if (first && x == 'object' && first.constructor != Array) {
                 // finalType += "_object(" + Object.keys(first) + ")";
@@ -95,7 +96,6 @@ function analyseNumberType(any, goFloat64 = true) {
 
 function analyseType(any, recursiveDebt = 0, goFloat64 = true) {
     const basicType = typeof(any);
-    // let finalType = basicType;
 
     switch (basicType) {
         case "object" :
