@@ -14,7 +14,7 @@ function parseJson(json) {
     }
 }
 
-function makeStructMap(obj, structName, goFloat64 = true) {
+function makeStructMap(obj, structName, goFloat64) {
 
     let layers = {};
     let goStructCandidate = {}; // {  name: [ signature1, signature2, ..... signatureN ] }
@@ -40,7 +40,7 @@ function makeStructMap(obj, structName, goFloat64 = true) {
 
         for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
-            const type = analyseType(value);
+            const type = analyseType(value,goFloat64);
             const parsedKey = makeParseKey(prefixKey, key);
 
             if (layers.hasOwnProperty(layer)) {
@@ -54,7 +54,7 @@ function makeStructMap(obj, structName, goFloat64 = true) {
                 addToGoStructCandidate(key, Object.keys(value))
             } else if (type.includes("array")) {
                 value.forEach(v => {
-                    if (analyseType(v) == "object") {
+                    if (analyseType(v,goFloat64) == "object") {
                         parseMap(v, layer + 1, parsedKey);
                         addToGoStructCandidate(key, Object.keys(v));
                     }
@@ -251,7 +251,7 @@ function constructGoType(candidates, omitemptyMember, rootType, rootStructName) 
     return result;
 }
 
-function jsonToGoStruct(json, structName, goFloat64 = true) {
+function jsonToGoStruct(json, structName, goFloat64) {
 
     // json.Parse( '{ a : 1.0}' ) will results { a : 1 }
     // In order to keep float as float ( value doesn't matter but type )

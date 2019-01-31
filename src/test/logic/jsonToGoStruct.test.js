@@ -64,7 +64,7 @@ test('test invalid payload', () => {
 test('test Render simple structure', () => {
     const input = testResourceAsString("example/simpleStruct/input.json");
     const expected = testResourceAsString("example/simpleStruct/output.text");
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected);
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
 });
 
 test('test Render simple structure for int and float', () => {
@@ -80,7 +80,7 @@ test('test Render structure for int and contain array', () => {
     const input = testResourceAsString("example/intAndArray/input.json");
     const expected = testResourceAsString("example/intAndArray/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected);
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
 });
 
 test('test Render nested structure', () => {
@@ -88,7 +88,7 @@ test('test Render nested structure', () => {
     const input = testResourceAsString("example/nestStructure/input.json");
     const expected = testResourceAsString("example/nestStructure/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected);
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
 });
 
 test('test Render nested structure with different types', () => {
@@ -96,7 +96,7 @@ test('test Render nested structure with different types', () => {
     const input = testResourceAsString("example/nestedDifferentType/input.json");
     const expected = testResourceAsString("example/nestedDifferentType/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected);
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
 });
 
 
@@ -105,7 +105,7 @@ test('test Render nested structure with duplicate types so we will reuse it', ()
     const input = testResourceAsString("example/nestedDuplicate/input.json");
     const expected = testResourceAsString("example/nestedDuplicate/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected);
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
 });
 
 
@@ -114,7 +114,7 @@ test("Recursive type", () => {
     const input = testResourceAsString("example/recursiveType/input.json");
     const expected = testResourceAsString("example/recursiveType/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected)
 });
 
 test("Object self recursive", () => {
@@ -122,7 +122,7 @@ test("Object self recursive", () => {
     const input = testResourceAsString("example/objectSelfRecursive/input.json");
     const expected = testResourceAsString("example/objectSelfRecursive/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected)
 });
 
 test("nestedComplex", () => {

@@ -1,0 +1,39 @@
+.menu {
+  //background-color: lightcoral;
+  display: flex;
+  flex-direction: row;
+
+  input {
+    width: 20rem;
+    padding: 12px 20px;
+    margin: .2rem 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  &__btn_group {
+    margin-left: auto;
+
+    a > img {
+      width: 2rem;
+    }
+  }
+
+  &__checkbox_group{
+    //margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    margin-left: 1rem;
+    input{
+      width: 1.5rem;
+      height: 3rem;
+    }
+    label{
+      line-height: 3rem;
+    }
+
+  }
+}
