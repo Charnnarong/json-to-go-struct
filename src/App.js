@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import './scss/main.scss'
+import Header from "./components/Header";
+import Menu from "./components/Menu";
+import Editor from "./components/Editor";
 
 
 class App extends Component {
@@ -24,18 +27,9 @@ class App extends Component {
     render() {
         return (
             <div className="mainApp">
-                <div className="header">
-                    <p>THis is header</p>
-                </div>
-                <div className="menu">
-                    <p>this is menu</p>
-                </div>
-                <div className="editor">
-                    <div className="editor__text_areas">
-                        <textarea className="editor__text_areas--input"></textarea>
-                        <textarea className="editor__text_areas--output"></textarea>
-                    </div>
-                </div>
+                <Header/>
+                <Menu/>
+                <Editor/>
             </div>
         );
     }
