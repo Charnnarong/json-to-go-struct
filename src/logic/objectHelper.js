@@ -2,33 +2,35 @@ function getSortedKey(obj) {
     return Object.keys(obj).sort((a, b) => a.localeCompare(b))
 }
 
-function analyseTypeOfArray(any,goFloat64) {
+
+const hasFloat = (arrayOfNumber) => arrayOfNumber.reduce((foundFloat, x) => {
+    return foundFloat || !Number.isInteger(x)
+}, false);
+
+function analyseTypeOfArray(any, goFloat64) {
     let finalType = "array";
 
-    if (any.length > 0) {
-        const first = any[0];
-        let x = typeof first;
-        if (x === "number") {
-            const hasFloat = any.reduce((foundFloat, x) => {
-                return foundFloat || !Number.isInteger(x)
-            }, false);
-
-            if (goFloat64) {
-                x = hasFloat ? "float64" : "int";
-            } else {
-                x = hasFloat ? "float32" : "int";
-            }
-
-            finalType += "_" + x;
-        } else if (first && x === 'object' && first.constructor !== Array) {
-            finalType += "_object";
-        } else {
-
-            finalType += ("_" + x)
-        }
-    } else {
-        finalType += "_empty"
+    if (any.length === 0) {
+        return finalType + "_empty"
     }
+
+    const first = any[0];
+    let plausibleType = typeof first;
+    if (plausibleType === "number") {
+
+        plausibleType = "int";
+
+        if (hasFloat(any)) {
+            plausibleType = goFloat64 ? "float64" : "float32";
+        }
+
+        finalType += "_" + plausibleType;
+    } else if (first && plausibleType === 'object' && first.constructor !== Array) {
+        finalType += "_object";
+    } else {
+        finalType += ("_" + plausibleType)
+    }
+
     return finalType;
 }
 
@@ -37,7 +39,7 @@ function analyseObjectType(any, goFloat64) {
     if (any == null) {
         finalType = "null"
     } else if (any && any.constructor === Array) {
-        finalType =  analyseTypeOfArray(any,goFloat64);
+        finalType = analyseTypeOfArray(any, goFloat64);
 
     }
 

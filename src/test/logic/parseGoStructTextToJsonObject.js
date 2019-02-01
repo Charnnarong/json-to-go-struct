@@ -24,7 +24,6 @@ function parseGoStructTextToJsonObject(receivedElement) {
             return;
         }
         if (token.includes("{") && structStack.length > 0) {
-            // structStack.push(token);
             return;
         }
         if (token === "}") {
