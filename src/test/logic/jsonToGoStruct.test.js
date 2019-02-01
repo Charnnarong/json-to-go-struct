@@ -1,5 +1,5 @@
 import jsonToGoStruct from '../../logic/jsonToGoStruct'
-import toMatchGoStruct from "./goStructStringMatcher";
+import toMatchGoStruct from "./toMatchGoStruct";
 
 const fs = require('fs');
 
@@ -27,8 +27,8 @@ test('test empty json string when there is a space inside', () => {
 });
 
 test('test empty json string when there is a new line inside', () => {
-    const input = `{    
-               
+    const input = `{
+
             }`;
     const name = "Aaa";
     const expected = `type Aaa struct {}`;
@@ -37,11 +37,11 @@ test('test empty json string when there is a new line inside', () => {
 });
 
 test('test empty json string ignore format', () => {
-    const input = `{  
+    const input = `{
         }`;
     const name = "Aaa";
     const expected = `type Aaa struct {
-        
+
         }`;
     expect(jsonToGoStruct(input, name)).toMatchGoStruct(expected);
 });
@@ -138,5 +138,13 @@ test("startWithArray", () => {
     const input = testResourceAsString("example/startWithArray/input.json");
     const expected = testResourceAsString("example/startWithArray/output.text");
 
-    expect(jsonToGoStruct(input, "abc")).toMatchGoStruct(expected)
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected)
+});
+
+test("startWithArray for float32", () => {
+
+    const input = testResourceAsString("example/startWithArray/input.json");
+    const expected = testResourceAsString("example/startWithArray/output_float32.text");
+
+    expect(jsonToGoStruct(input, "abc",false)).toMatchGoStruct(expected)
 });

@@ -1,5 +1,4 @@
 .menu {
-  //background-color: lightcoral;
   display: flex;
   flex-direction: row;
 
@@ -21,17 +20,17 @@
     }
   }
 
-  &__checkbox_group{
+  &__checkbox_group {
     //margin-right: auto;
     display: flex;
     flex-direction: row;
     align-items: stretch;
     margin-left: 1rem;
-    input{
+    input {
       width: 1.5rem;
       height: 3rem;
     }
-    label{
+    label {
       line-height: 3rem;
     }
 
