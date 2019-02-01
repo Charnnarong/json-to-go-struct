@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import githubIcon from '../githubIcon.png';
 
 const Menu = ({onMainStructNameChange, onFloat32Toggle}) => {
@@ -19,6 +19,6 @@ const Menu = ({onMainStructNameChange, onFloat32Toggle}) => {
         </div>
     );
 
-}
+};
 
 export default Menu;
