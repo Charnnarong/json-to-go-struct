@@ -1,4 +1,4 @@
-#Json to Go's struct.
+# Json to Go's struct.
 
 Give [the tool (Live demo)](https://charnnarong.github.io/json-to-go-struct/ "Json to go struct") any valid JSON string 
 and you will get Golang's struct(s) back that represent the inputted JSON.
