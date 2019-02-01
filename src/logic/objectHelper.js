@@ -2,88 +2,45 @@ function getSortedKey(obj) {
     return Object.keys(obj).sort((a, b) => a.localeCompare(b))
 }
 
+
+const hasFloat = (arrayOfNumber) => arrayOfNumber.reduce((foundFloat, x) => {
+    return foundFloat || !Number.isInteger(x)
+}, false);
+
+function analyseTypeOfArray(any, goFloat64) {
+    let finalType = "array";
+
+    if (any.length === 0) {
+        return finalType + "_empty"
+    }
+
+    const first = any[0];
+    let plausibleType = typeof first;
+    if (plausibleType === "number") {
+
+        plausibleType = "int";
+
+        if (hasFloat(any)) {
+            plausibleType = goFloat64 ? "float64" : "float32";
+        }
+
+        finalType += "_" + plausibleType;
+    } else if (first && plausibleType === 'object' && first.constructor !== Array) {
+        finalType += "_object";
+    } else {
+        finalType += ("_" + plausibleType)
+    }
+
+    return finalType;
+}
+
 function analyseObjectType(any, goFloat64) {
     let finalType = 'object';
     if (any == null) {
         finalType = "null"
-    } else if (any && any.constructor == Array) {
-        finalType = "array";
+    } else if (any && any.constructor === Array) {
+        finalType = analyseTypeOfArray(any, goFloat64);
 
-        if (any.length > 0) {
-            const first = any[0];
-            let x = typeof first;
-            if (x == "number") {
-                const hasFloat = any.reduce((foundFloat, x) => { return foundFloat || !Number.isInteger(x)} , false);
-                x = hasFloat ? (goFloat64 ? "float64" : "float32") : "int";
-                finalType += "_" + x;
-            } else if (first && x == 'object' && first.constructor != Array) {
-                // finalType += "_object(" + Object.keys(first) + ")";
-                finalType += "_object";
-            } else {
-
-                finalType += ("_" + x)
-            }
-        } else {
-            finalType += "_empty"
-        }
-
-        // if (recursiveDebt > 1) {
-        //     return finalType;
-        // }
-        //
-        // let arrayType = "any";
-        // const typesSet = new Set();
-        // for (let i = 0; i < any.length; i++) {
-        //     arrayType = analyseType(any[i], recursiveDebt + 1);
-        //     typesSet.add(arrayType)
-        // }
-        //
-        // if (typesSet.size == 1) {
-        //     arrayType = typesSet.values().next().value;
-        // }
-        // else if (typesSet.size == 2) {
-        //     let int = '';
-        //     let float = '';
-        //
-        //     typesSet.forEach((value1, value2, set) => {
-        //         if (value1.includes("int")) {
-        //             int = value1
-        //         }
-        //         if (value1.includes("float")) {
-        //             float = value1
-        //         }
-        //     });
-        //
-        //     if (int && float) {
-        //         arrayType = float;
-        //     }
-        //     // else{
-        //     //     arrayType = "any"
-        //     // }
-        // } else {
-        //     let int = ''
-        //     let float = ''
-        //     let string = ''
-        //
-        //     typesSet.forEach((value1, value2, set) => {
-        //         if (value1.includes("int")) {
-        //             int = value1
-        //         }
-        //         if (value1.includes("float")) {
-        //             float = value1
-        //         }
-        //         if (value1.includes("string")) {
-        //             string = value1
-        //         }
-        //     });
-        //
-        //     if (int && float && string) {
-        //         arrayType = string.replace("string","any");
-        //     }
-        // }
-        //
-        //
-        // finalType += ("_" + arrayType)
     }
 
     return finalType;
@@ -91,15 +48,19 @@ function analyseObjectType(any, goFloat64) {
 
 function analyseNumberType(any, goFloat64) {
 
-    return Number.isInteger(any) ? "int" : goFloat64 ? "float64" : "float32";
+    if (goFloat64) {
+        return Number.isInteger(any) ? "int" : "float64";
+    } else {
+        return Number.isInteger(any) ? "int" : "float32";
+    }
 }
 
-function analyseType(any,  goFloat64) {
+function analyseType(any, goFloat64) {
     const basicType = typeof(any);
 
     switch (basicType) {
         case "object" :
-            return analyseObjectType(any,goFloat64);
+            return analyseObjectType(any, goFloat64);
         case "number" :
             return analyseNumberType(any, goFloat64);
         default :

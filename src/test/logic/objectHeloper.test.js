@@ -1,4 +1,3 @@
-import jsonToGoStruct from "../../logic/jsonToGoStruct";
 import {analyseType, getSortedKey} from "../../logic/objectHelper";
 
 
@@ -35,7 +34,7 @@ test("analyse empty Object", () => {
 
 
 test("analyse non empty Object", () => {
-    const x = {'a':1};
+    const x = {'a': 1};
     expect(analyseType(x)).toEqual("object");
 });
 
@@ -45,35 +44,35 @@ test("analyse empty array ", () => {
 });
 
 test("analyse Array of int Type ", () => {
-    const x = [1,2,3];
+    const x = [1, 2, 3];
     expect(analyseType(x)).toEqual("array_int");
 });
 
 test("analyse Array of array of int Type ", () => {
-    const x = [[1],[2],[3]];
+    const x = [[1], [2], [3]];
     expect(analyseType(x)).toEqual("array_object");
 });
 
 test("analyse Array of array of any Type ", () => {
-    const x = [[1],[2.1],[3]];
+    const x = [[1], [2.1], [3]];
     expect(analyseType(x)).toEqual("array_object");
 });
 
 test("analyse Array of array of mixed Type ", () => {
-    const x = [['sdf'],[34.4],[3]];
+    const x = [['sdf'], [34.4], [3]];
     expect(analyseType(x)).toEqual("array_object");
 });
 
 test("analyse Array of float Type ", () => {
-    const x = [1,2.2,3];
-    expect(analyseType(x,true)).toEqual("array_float64");
+    const x = [1, 2.2, 3];
+    expect(analyseType(x, true)).toEqual("array_float64");
 });
 test("analyse Array of float Type ", () => {
-    const x = [1,2.2,3];
+    const x = [1, 2.2, 3];
     expect(analyseType(x)).toEqual("array_float32");
 });
 
 test("analyse Array of string Type ", () => {
-    const x = ['1','2','3'];
+    const x = ['1', '2', '3'];
     expect(analyseType(x)).toEqual("array_string");
 });

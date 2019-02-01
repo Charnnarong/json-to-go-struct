@@ -49,12 +49,12 @@ function makeStructMap(obj, structName, goFloat64) {
                 layers[layer] = [[parsedKey, type]]
             }
 
-            if (type == "object") {
+            if (type === "object") {
                 parseMap(value, layer + 1, parsedKey);
                 addToGoStructCandidate(key, Object.keys(value))
             } else if (type.includes("array")) {
                 value.forEach(v => {
-                    if (analyseType(v,goFloat64) == "object") {
+                    if (analyseType(v,goFloat64) === "object") {
                         parseMap(v, layer + 1, parsedKey);
                         addToGoStructCandidate(key, Object.keys(v));
                     }
@@ -80,8 +80,8 @@ function makeStructMap(obj, structName, goFloat64) {
                     memberCount[x] = 1;
                 }
             });
-            Object.keys(memberCount).map(k => {
-                memberCount[k] = memberCount[k] < goStructCandidate[key].length
+            Object.keys(memberCount).forEach(k => {
+                memberCount[k] = memberCount[k] < goStructCandidate[key].length;
             });
             omitemptyMember[key] = memberCount;
             (new Set(flattenCandidateMember)).forEach(x => {
@@ -98,7 +98,7 @@ function makeStructMap(obj, structName, goFloat64) {
         for (const key of keys) {
             layers[key].forEach(x => {
                 let keyStr = x[0];
-                let keyStrArray = keyStr.split(/[,\)]/g).filter(x => x != "");
+                let keyStrArray = keyStr.split(/[,)]/g).filter(x => x !== "");
                 let goStructName = keyStrArray[keyStrArray.length - 2];
                 let memberName = keyStrArray[keyStrArray.length - 1];
                 let type = x[1];
@@ -120,7 +120,7 @@ function flattenDeep(arr) {
 
 function makeGoType(arrayTypes, key, isReferenceType) {
     const userDefinedType = makeGoStructVariable(key);
-    if (arrayTypes.length == 1) {
+    if (arrayTypes.length === 1) {
         switch (arrayTypes[0]) {
             case "array_object":
                 return `[]${userDefinedType}`;
@@ -148,23 +148,6 @@ function makeGoType(arrayTypes, key, isReferenceType) {
     }
 
     return "interface{}"
-}
-
-/**
- * --> 'a,b'
- * <-- 'A'
- *
- * --> 'abc,def'
- * <-- 'Abc'
- *
- * @param key2
- */
-function makeGoStructVariable__Deprecate(key) {
-
-    let s = key.split(',');
-
-    return upperFirstLetter(s[0])
-
 }
 
 function makeGoStructVariable(s) {
@@ -224,7 +207,7 @@ function makeCommonInitialisms(camelStr) {
 
 /**
  * @param structMap e.g { Abc: { name: 'string' , surname: 'string' } }
- * @returns {undefined}
+ * @returns {string}
  */
 function constructGoType(candidates, omitemptyMember, rootType, rootStructName) {
 
@@ -232,18 +215,18 @@ function constructGoType(candidates, omitemptyMember, rootType, rootStructName) 
     Object.keys(candidates).forEach(key => {
         // parent layer
 
-        let goStruct = (key == rootStructName && rootType.includes("array_")) ? `type ${makeGoStructVariable(key)} []struct {` : `type ${makeGoStructVariable(key)} struct {`;
+        let goStruct = (key === rootStructName && rootType.includes("array_")) ? `type ${makeGoStructVariable(key)} []struct {` : `type ${makeGoStructVariable(key)} struct {`;
         // let goStruct = `type ${makeGoStructVariable(key)} struct {`;
         const values = Object.keys(candidates[key]);
 
         for (const key2 of values) {
             // key2 = member name
             const arrayTypes = candidates[key][key2];
-            const isReferenceType = key == key2;
+            const isReferenceType = key === key2;
             const goType = makeGoType(arrayTypes, key2, isReferenceType);
             const jsonType = (!goType.includes("interface")) && omitemptyMember[key][key2] ? `\t\`json:"${key2},omitempty"\`` : `\t\`json:"${key2}"\``;
-            const templatedKeyValue = makeCommonInitialisms(makeGoStructVariable(key2)) + "\t" + makeGoType(arrayTypes, key2, isReferenceType) + jsonType;
-            goStruct += "\n  " + templatedKeyValue
+            const templateKeyValue = makeCommonInitialisms(makeGoStructVariable(key2)) + "\t" + goType + jsonType;
+            goStruct += "\n  " + templateKeyValue
         }
         goStruct += `\n}\n\n`;
         result += goStruct
@@ -267,14 +250,12 @@ function jsonToGoStruct(json, structName, goFloat64) {
     const rootStructName = makeGoStructVariable(structName);
 
     // check empty object
-    if (Object.keys(value).length == 0) {
+    if (Object.keys(value).length === 0) {
         return {value: `type ${rootStructName} struct {}`, err: false}
     }
 
 
-    // console.debug(value);
     const {goStructCandidate, omitemptyMember, rootType} = makeStructMap(value, rootStructName, goFloat64);
-    // console.debug(goStructCandidate);
     const goStruct = constructGoType(goStructCandidate, omitemptyMember, rootType, rootStructName);
 
     return {
@@ -286,4 +267,4 @@ function jsonToGoStruct(json, structName, goFloat64) {
     };
 }
 
-export default jsonToGoStruct
+export default jsonToGoStruct;

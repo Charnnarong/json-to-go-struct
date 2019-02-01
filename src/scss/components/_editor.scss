@@ -1,8 +1,6 @@
 .editor{
-  //background-color: lightcyan;
   &__text_areas{
     display: flex;
-    //background-color: lightseagreen;
     justify-content:flex-start;
     flex-direction: row;
     align-items: stretch;
@@ -11,13 +9,11 @@
     width: 100%;
     &--input{
       flex: 1;
-      //background-color: lightgreen;
       white-space: pre;
       padding: 1rem;
     }
     &--output{
       flex: 1;
-      //background-color: lightblue;
       white-space: pre;
       padding: 1rem;
     }
