@@ -151,7 +151,7 @@ function makeGoType(arrayTypes, key, isReferenceType) {
 }
 
 function makeGoStructVariable(s) {
-    return s.split("_").map(x => upperFirstLetter(x)).join("");
+    return s.split(/[-_]/g).map(x => upperFirstLetter(x)).join("");
 
 }
 

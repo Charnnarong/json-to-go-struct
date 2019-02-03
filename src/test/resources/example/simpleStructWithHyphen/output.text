@@ -1,0 +1,4 @@
+type Abc struct {
+	FirstName string `json:"first-name"`
+	Surname   string `json:"surname"`
+}
