@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "7995bf0f8c2bca1222c7",
+    "revision": "ac1d2507220366ac9e49",
     "url": "/json-to-go-struct/static/css/main.323510a0.chunk.css"
   },
   {
-    "revision": "7995bf0f8c2bca1222c7",
-    "url": "/json-to-go-struct/static/js/main.7995bf0f.chunk.js"
+    "revision": "ac1d2507220366ac9e49",
+    "url": "/json-to-go-struct/static/js/main.ac1d2507.chunk.js"
   },
   {
     "revision": "f03e8ae863144a61c620",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/json-to-go-struct/static/js/runtime~main.71fdf6cf.js"
   },
   {
-    "revision": "1cb77fdf4d25db178299ae416ceb2ca0",
+    "revision": "814f725bc979870d2a81dfe37daf0b2d",
     "url": "/json-to-go-struct/index.html"
   }
 ];
