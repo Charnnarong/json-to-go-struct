@@ -67,6 +67,12 @@ test('test Render simple structure', () => {
     expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
 });
 
+test('test Render simple structure when key contain hyphen', () => {
+    const input = testResourceAsString("example/simpleStructWithHyphen/input.json");
+    const expected = testResourceAsString("example/simpleStructWithHyphen/output.text");
+    expect(jsonToGoStruct(input, "abc",true)).toMatchGoStruct(expected);
+});
+
 test('test Render simple structure for int and float', () => {
 
     const input = testResourceAsString("example/intAndFloat/input.json");
