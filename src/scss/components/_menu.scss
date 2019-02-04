@@ -14,7 +14,7 @@
 
   &__btn_group {
     margin-left: auto;
-    &__container{
+    &__container {
       display: flex;
       &__button {
         -moz-box-shadow: inset 0px 1px 3px 0px #91b8b3;
@@ -54,6 +54,12 @@
     flex-direction: row;
     align-items: stretch;
     margin-left: 1rem;
+    //& > * {
+    & > :not(label) {
+        margin-left: 0.5rem;
+      }
+    //}
+    flex: 1 1 auto;
     input {
       width: 1.5rem;
       height: 3rem;
