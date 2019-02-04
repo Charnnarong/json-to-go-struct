@@ -8,6 +8,7 @@ import jsonToGoStruct from "./logic/jsonToGoStruct";
 
 class App extends Component {
 
+
     constructor(props) {
         super(props);
         this.state = {
@@ -15,7 +16,8 @@ class App extends Component {
             mainStructName: '',
             isFloat32: false,
             goStructResult: ''
-        }
+        };
+        this.textAreaOutputRef = React.createRef();
     }
 
 
@@ -32,6 +34,13 @@ class App extends Component {
         this.setState({jsonString}, this.parseGoType)
     };
 
+    onCopyToClipBoard = () =>{
+        let copyText = this.textAreaOutputRef.current;
+        copyText.select();
+        document.execCommand("copy");
+        // alert("Copied output.");
+    };
+
     parseGoType = () => {
         let goStructResult = '';
         if (this.state.jsonString && this.state.mainStructName) {
@@ -44,8 +53,8 @@ class App extends Component {
         return (
             <div className="mainApp">
                 <Header/>
-                <Menu onMainStructNameChange={this.onMainStructNameChange} onFloat32Toggle={this.onFloat32Toggle}/>
-                <Editor onTextInputChange={this.onTextInputChange} goStructResult={this.state.goStructResult}/>
+                <Menu onMainStructNameChange={this.onMainStructNameChange} onFloat32Toggle={this.onFloat32Toggle} copyToClipBoard={this.onCopyToClipBoard}/>
+                <Editor ref={this.textAreaOutputRef} onTextInputChange={this.onTextInputChange} goStructResult={this.state.goStructResult}/>
             </div>
         );
     }

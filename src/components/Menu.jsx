@@ -1,7 +1,7 @@
 import React from "react";
 import githubIcon from '../githubIcon.png';
 
-const Menu = ({onMainStructNameChange, onFloat32Toggle}) => {
+const Menu = ({onMainStructNameChange, onFloat32Toggle,copyToClipBoard}) => {
 
     return (
         <div className="menu">
@@ -12,9 +12,12 @@ const Menu = ({onMainStructNameChange, onFloat32Toggle}) => {
                 <label htmlFor="float64">{"float32"}</label>
             </div>
             <div className="menu__btn_group">
-                <a href="https://github.com/Charnnarong/json-to-go-struct">
-                    <img src={githubIcon} alt="github"/>
-                </a>
+                <div className="menu__btn_group__container">
+                    <a className="menu__btn_group__container__button" onClick={copyToClipBoard}>Copy Text to Clipboard</a>
+                    <a href="https://github.com/Charnnarong/json-to-go-struct">
+                        <img src={githubIcon} alt="github"/>
+                    </a>
+                </div>
             </div>
         </div>
     );
