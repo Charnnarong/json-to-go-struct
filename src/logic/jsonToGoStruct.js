@@ -40,7 +40,7 @@ function makeStructMap(obj, structName, goFloat64) {
 
         for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
-            const type = analyseType(value,goFloat64);
+            const type = analyseType(value, goFloat64);
             const parsedKey = makeParseKey(prefixKey, key);
 
             if (layers.hasOwnProperty(layer)) {
@@ -54,7 +54,7 @@ function makeStructMap(obj, structName, goFloat64) {
                 addToGoStructCandidate(key, Object.keys(value))
             } else if (type.includes("array")) {
                 value.forEach(v => {
-                    if (analyseType(v,goFloat64) === "object") {
+                    if (analyseType(v, goFloat64) === "object") {
                         parseMap(v, layer + 1, parsedKey);
                         addToGoStructCandidate(key, Object.keys(v));
                     }
@@ -198,10 +198,10 @@ const commonInitialisms = {
 };
 
 function makeCommonInitialisms(camelStr) {
-    return camelStr.replace(/([a-z0-9])([A-Z])/g,"$1 $2").split(" ").map(x => {
+    return camelStr.replace(/([a-z0-9])([A-Z])/g, "$1 $2").split(" ").map(x => {
         const upperX = x.toUpperCase();
         return commonInitialisms.hasOwnProperty(upperX) ? upperX : x;
-    } ).join("");
+    }).join("");
 
 }
 
@@ -259,9 +259,6 @@ function jsonToGoStruct(json, structName, goFloat64) {
     const goStruct = constructGoType(goStructCandidate, omitemptyMember, rootType, rootStructName);
 
     return {
-        // value: `type ${rootStructName} struct {
-        //
-        // }`,
         value: goStruct,
         err: false
     };
