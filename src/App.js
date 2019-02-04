@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import Menu from "./components/Menu";
 import Editor from "./components/Editor";
 import jsonToGoStruct from "./logic/jsonToGoStruct";
-
+import sampleInput from "./SampleInput";
 
 class App extends Component {
 
@@ -15,9 +15,11 @@ class App extends Component {
             jsonString: '',
             mainStructName: '',
             isFloat32: false,
-            goStructResult: ''
+            goStructResult: '',
+            isUserSelectSample: false,
+            waitingAcknowledgeCount: 0,
+            isUserCopyClipBoard: false
         };
-        this.textAreaOutputRef = React.createRef();
     }
 
 
@@ -34,11 +36,8 @@ class App extends Component {
         this.setState({jsonString}, this.parseGoType)
     };
 
-    onCopyToClipBoard = () =>{
-        let copyText = this.textAreaOutputRef.current;
-        copyText.select();
-        document.execCommand("copy");
-        // alert("Copied output.");
+    onCopyToClipBoard = () => {
+        this.setState({isUserCopyClipBoard: true});
     };
 
     parseGoType = () => {
@@ -49,12 +48,51 @@ class App extends Component {
         this.setState({goStructResult})
     };
 
+    onSampleChange = (sample) => {
+        const mainStructName = 'Select_sample_JSON' === sample ? "" : sample;
+        const jsonString = 'Select_sample_JSON' === sample ? "" : sampleInput(sample);
+        const waitingAcknowledgeCount = 'Select_sample_JSON' === sample ? 0 : 2; // For User's defined struct name and Text input area.
+        this.setState({mainStructName, jsonString, isUserSelectSample: true, waitingAcknowledgeCount}, () => {
+            this.parseGoType();
+        })
+    };
+
+    onAcknowledgeUserSelectSample = () => {
+        let waitingAcknowledgeCount = this.state.waitingAcknowledgeCount - 1;
+        let isUserSelectSample = this.state.isUserSelectSample;
+        if (waitingAcknowledgeCount <= 0) {
+            isUserSelectSample = false;
+            waitingAcknowledgeCount = 0;
+        }
+        this.setState({waitingAcknowledgeCount, isUserSelectSample});
+    };
+
+    onAcknowledgeUserCopyClipBoard = () => {
+        this.setState({isUserCopyClipBoard: false});
+    };
+
     render() {
         return (
             <div className="mainApp">
                 <Header/>
-                <Menu onMainStructNameChange={this.onMainStructNameChange} onFloat32Toggle={this.onFloat32Toggle} copyToClipBoard={this.onCopyToClipBoard}/>
-                <Editor ref={this.textAreaOutputRef} onTextInputChange={this.onTextInputChange} goStructResult={this.state.goStructResult}/>
+                <Menu onMainStructNameChange={this.onMainStructNameChange}
+                      onFloat32Toggle={this.onFloat32Toggle}
+                      copyToClipBoard={this.onCopyToClipBoard}
+                      onSampleChange={this.onSampleChange}
+
+                      isUserSelectSample={this.state.isUserSelectSample}
+                      userSample={this.state.mainStructName}
+                      acknowledgeUserSelectSample={this.onAcknowledgeUserSelectSample}
+                />
+                <Editor isUserCopyClipBoard={this.state.isUserCopyClipBoard}
+                        acknowledgeUserCopyClipBoard={this.onAcknowledgeUserCopyClipBoard}
+                        onTextInputChange={this.onTextInputChange}
+                        goStructResult={this.state.goStructResult}
+
+                        isUserSelectSample={this.state.isUserSelectSample}
+                        userSample={this.state.jsonString}
+                        acknowledgeUserSelectSample={this.onAcknowledgeUserSelectSample}
+                />
             </div>
         );
     }
