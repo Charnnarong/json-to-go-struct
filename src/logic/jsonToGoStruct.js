@@ -20,10 +20,6 @@ function makeStructMap(obj, structName, goFloat64) {
     let goStructCandidate = {};
     let omitemptyMember = {};
 
-    function makeParseKey(prefixKey, key) {
-        return `(${prefixKey},${key})`;
-    }
-
     function addToGoStructCandidate(key, arrayOfStringValue) {
         if (goStructCandidate.hasOwnProperty(key)) {
             goStructCandidate[key].push(arrayOfStringValue);
@@ -32,16 +28,16 @@ function makeStructMap(obj, structName, goFloat64) {
         }
     }
 
-    function parseMap(jsonObj, layer, prefixKey) {
-        if (jsonObj == null) {
+    (function parseMap(jsonObj, layer, prefixKey) {
+
+        if (!jsonObj) {
             return;
         }
-
 
         for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
             const type = analyseType(value, goFloat64);
-            const parsedKey = makeParseKey(prefixKey, key);
+            const parsedKey = `(${prefixKey},${key})`;
 
             if (layers.hasOwnProperty(layer)) {
                 layers[layer].push([parsedKey, type])
@@ -62,11 +58,8 @@ function makeStructMap(obj, structName, goFloat64) {
             }
 
         }
-    }
+    })({[structName]: obj} , 0 , "");
 
-    let wrapper = {};
-    wrapper[structName] = obj;
-    parseMap(wrapper, 0, "");
 
     (function combinedGoStructCandidateMember() {
         Object.keys(goStructCandidate).forEach(key => {
@@ -254,10 +247,9 @@ function jsonToGoStruct(json, structName, goFloat64) {
 
 
     const {goStructCandidate, omitemptyMember, rootType} = makeStructMap(value, rootStructName, goFloat64);
-    const goStruct = constructGoType(goStructCandidate, omitemptyMember, rootType, rootStructName);
 
     return {
-        value: goStruct,
+        value: constructGoType(goStructCandidate, omitemptyMember, rootType, rootStructName),
         err: false
     };
 }
