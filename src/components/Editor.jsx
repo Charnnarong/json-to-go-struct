@@ -29,7 +29,7 @@ class Editor extends Component {
     }
 
     render() {
-        const {onTextInputChange, goStructResult, isUserCopyClipBoard} = this.props;
+        const {onTextInputChange, goStructResult} = this.props;
 
         return (
             <div className="editor">

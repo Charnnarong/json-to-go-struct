@@ -23,7 +23,7 @@ class Menu extends Component {
                 this.props.acknowledgeUserSelectSample();
                 this.inputRef.current.value = this.props.userSample;
             }
-        } else if (this.props.userSample == "") {
+        } else if (this.props.userSample === "") {
             this.inputRef.current.value = "";
         }
     }
@@ -52,8 +52,8 @@ class Menu extends Component {
                 </div>
                 <div className="menu__btn_group">
                     <div className="menu__btn_group__container">
-                        <a className="menu__btn_group__container__button" onClick={copyToClipBoard}>Copy Text to
-                            Clipboard</a>
+                        <button className="menu__btn_group__container__button" onClick={copyToClipBoard} >Copy Text to
+                            Clipboard</button>
                         <a href="https://github.com/Charnnarong/json-to-go-struct">
                             <img src={githubIcon} alt="github"/>
                         </a>
