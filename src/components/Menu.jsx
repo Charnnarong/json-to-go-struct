@@ -52,8 +52,8 @@ class Menu extends Component {
                 </div>
                 <div className="menu__btn_group">
                     <div className="menu__btn_group__container">
-                        <a className="menu__btn_group__container__button" onClick={copyToClipBoard} href={"#"} >Copy Text to
-                            Clipboard</a>
+                        <button className="menu__btn_group__container__button" onClick={copyToClipBoard} >Copy Text to
+                            Clipboard</button>
                         <a href="https://github.com/Charnnarong/json-to-go-struct">
                             <img src={githubIcon} alt="github"/>
                         </a>
