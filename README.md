@@ -1,4 +1,13 @@
-# Json to Go's struct. [![Build Status](https://travis-ci.org/Charnnarong/json-to-go-struct.svg?branch=master)](https://travis-ci.org/Charnnarong/json-to-go-struct)
+# Json to Go's struct.  
+
+The master branch is where the live demo get deployed from.
+
+| Branch  | Build Status |
+| ------------- | ------------- |
+| master  | [![Build Status](https://travis-ci.org/Charnnarong/json-to-go-struct.svg?branch=master)](https://travis-ci.org/Charnnarong/json-to-go-struct)  |
+| develop  | [![Build Status](https://travis-ci.org/Charnnarong/json-to-go-struct.svg?branch=develop)](https://travis-ci.org/Charnnarong/json-to-go-struct)  |
+ 
+
 
 Give [the tool (Live demo)](https://charnnarong.github.io/json-to-go-struct/ "Json to go struct") any valid JSON string 
 and you will get Golang's struct(s) back that represent the inputted JSON.
