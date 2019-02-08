@@ -49,16 +49,13 @@
   }
 
   &__checkbox_group {
-    //margin-right: auto;
     display: flex;
     flex-direction: row;
     align-items: stretch;
     margin-left: 1rem;
-    //& > * {
     & > :not(label) {
-        margin-left: 0.5rem;
-      }
-    //}
+      margin-left: 0.5rem;
+    }
     flex: 1 1 auto;
     input {
       width: 1.5rem;
