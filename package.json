@@ -2,7 +2,7 @@
   "name": "json-to-go",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Charnnarong.github.io/json-to-go-struct",
+  "homepage": "https://Charnnarong.github.io/json-to-go-struct/",
   "dependencies": {
     "gh-pages": "^2.0.1",
     "node-sass": "^4.11.0",
@@ -14,6 +14,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "npm test -- --coverage",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
