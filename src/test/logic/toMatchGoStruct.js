@@ -2,8 +2,6 @@ import parseGoStructTextToJsonObject from "./parseGoStructTextToJsonObject";
 
 const R = require('ramda');
 
-
-
 function toMatchGoStruct(received, wanted, err) {
 
     if (err && received['err']) {
@@ -14,7 +12,6 @@ function toMatchGoStruct(received, wanted, err) {
         }
     }
 
-    // Not not-white-space (meaning white space) but also not include \r and \n as well.
     const receiveObj = parseGoStructTextToJsonObject(received['value']);
     const wantedObj = parseGoStructTextToJsonObject(wanted);
     wanted.replace(/[^\S]/g, '');

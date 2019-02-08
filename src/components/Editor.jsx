@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 class Editor extends Component {
-    // isUserCopyClipBoard
+
     constructor(props) {
         super(props);
         this.textAreaOutputRef = React.createRef();

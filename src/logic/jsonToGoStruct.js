@@ -17,7 +17,7 @@ function parseJson(json) {
 function makeStructMap(obj, structName, goFloat64) {
 
     let layers = {};
-    let goStructCandidate = {}; // {  name: [ signature1, signature2, ..... signatureN ] }
+    let goStructCandidate = {};
     let omitemptyMember = {};
 
     function makeParseKey(prefixKey, key) {
@@ -214,14 +214,12 @@ function constructGoType(candidates, omitemptyMember, rootType, rootStructName) 
 
     let result = '';
     Object.keys(candidates).forEach(key => {
-        // parent layer
 
         let goStruct = (key === rootStructName && rootType.includes("array_")) ? `type ${makeGoStructVariable(key)} []struct {` : `type ${makeGoStructVariable(key)} struct {`;
-        // let goStruct = `type ${makeGoStructVariable(key)} struct {`;
+
         const values = Object.keys(candidates[key]);
 
         for (const key2 of values) {
-            // key2 = member name
             const arrayTypes = candidates[key][key2];
             const isReferenceType = key === key2;
             const goType = makeGoType(arrayTypes, key2, isReferenceType);
@@ -250,7 +248,6 @@ function jsonToGoStruct(json, structName, goFloat64) {
 
     const rootStructName = makeGoStructVariable(structName);
 
-    // check empty object
     if (Object.keys(value).length === 0) {
         return {value: `type ${rootStructName} struct {}`, err: false}
     }
