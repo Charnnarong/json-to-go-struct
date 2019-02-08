@@ -140,8 +140,9 @@ function makeGoType(arrayTypes, key, isReferenceType) {
                 return `[]interface{}`;
             case "null":
                 return `interface{}`;
+            default:
+                return arrayTypes[0];
         }
-        return arrayTypes[0];
     }
     if (arrayTypes.includes("array_object")) {
         return `[]${userDefinedType}`;
