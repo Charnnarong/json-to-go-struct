@@ -24,35 +24,42 @@ function analyseTypeOfArray(any, goFloat64) {
             plausibleType = goFloat64 ? "float64" : "float32";
         }
 
-        finalType += "_" + plausibleType;
-    } else if (first && plausibleType === 'object' && first.constructor !== Array) {
-        finalType += "_object";
-    } else {
-        finalType += ("_" + plausibleType)
+        return finalType + "_" + plausibleType;
+
     }
 
-    return finalType;
+    if (first && plausibleType === 'object' && first.constructor !== Array) {
+        return finalType + "_object";
+
+    }
+    return finalType + ("_" + plausibleType)
+
 }
 
 function analyseObjectType(any, goFloat64) {
-    let finalType = 'object';
+
     if (any == null) {
-        finalType = "null"
-    } else if (any && any.constructor === Array) {
-        finalType = analyseTypeOfArray(any, goFloat64);
+        return "null"
+    }
+    if (any && any.constructor === Array) {
+        return analyseTypeOfArray(any, goFloat64);
 
     }
 
-    return finalType;
+    return 'object';
 }
 
 function analyseNumberType(any, goFloat64) {
 
-    if (goFloat64) {
-        return Number.isInteger(any) ? "int" : "float64";
-    } else {
-        return Number.isInteger(any) ? "int" : "float32";
+    if (Number.isInteger(any)) {
+        return "int"
     }
+
+    if (goFloat64) {
+        return "float64";
+    }
+    return "float32";
+
 }
 
 function analyseType(any, goFloat64) {

@@ -6,7 +6,7 @@ class Menu extends Component {
         super(props);
         this.state = {
             selectedValue: "Select_sample_JSON"
-        }
+        };
         this.inputRef = React.createRef();
     }
 

@@ -24,17 +24,17 @@ function toMatchGoStruct(received, wanted, err) {
                 `expected ------\n${received['value']}\nto be ---------\n${wanted}\n`,
             pass: true,
         }
-    } else {
-        return {
-            message: () =>
-                `\nExpected: \n\n${wanted}\n\n` +
-                `Received: \n\n${received['value']}\n\n` +
-                "================================\n"+
-                `\nExpected: \n${JSON.stringify(wantedObj)}\n\n` +
-                `Received: \n${JSON.stringify(receiveObj)}\n\n`,
-            pass: false,
-        };
     }
+    return {
+        message: () =>
+            `\nExpected: \n\n${wanted}\n\n` +
+            `Received: \n\n${received['value']}\n\n` +
+            "================================\n" +
+            `\nExpected: \n${JSON.stringify(wantedObj)}\n\n` +
+            `Received: \n${JSON.stringify(receiveObj)}\n\n`,
+        pass: false,
+    };
+
 }
 
 export default toMatchGoStruct

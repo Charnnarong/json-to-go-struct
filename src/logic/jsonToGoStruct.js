@@ -1,4 +1,5 @@
 import {analyseType, getSortedKey} from "./objectHelper";
+import {commonInitialisms, goTypeTable} from "./configDicts";
 
 function upperFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -21,11 +22,10 @@ function makeStructMap(obj, structName, goFloat64) {
     let omitemptyMember = {};
 
     function addToGoStructCandidate(key, arrayOfStringValue) {
-        if (goStructCandidate.hasOwnProperty(key)) {
-            goStructCandidate[key].push(arrayOfStringValue);
-        } else {
-            goStructCandidate[key] = [arrayOfStringValue];
+        if (!goStructCandidate.hasOwnProperty(key)) {
+            goStructCandidate[key] = [];
         }
+        goStructCandidate[key].push(arrayOfStringValue);
     }
 
     (function parseMap(jsonObj, layer, prefixKey) {
@@ -39,16 +39,17 @@ function makeStructMap(obj, structName, goFloat64) {
             const type = analyseType(value, goFloat64);
             const parsedKey = `(${prefixKey},${key})`;
 
-            if (layers.hasOwnProperty(layer)) {
-                layers[layer].push([parsedKey, type])
-            } else {
-                layers[layer] = [[parsedKey, type]]
+            if (!layers.hasOwnProperty(layer)) {
+                layers[layer] = []
             }
+            layers[layer].push([parsedKey, type]);
 
             if (type === "object") {
                 parseMap(value, layer + 1, parsedKey);
                 addToGoStructCandidate(key, Object.keys(value))
-            } else if (type.includes("array")) {
+            }
+
+            if (type.includes("array")) {
                 value.forEach(v => {
                     if (analyseType(v, goFloat64) === "object") {
                         parseMap(v, layer + 1, parsedKey);
@@ -58,7 +59,7 @@ function makeStructMap(obj, structName, goFloat64) {
             }
 
         }
-    })({[structName]: obj} , 0 , "");
+    })({[structName]: obj}, 0, "");
 
 
     (function combinedGoStructCandidateMember() {
@@ -67,11 +68,10 @@ function makeStructMap(obj, structName, goFloat64) {
             let memberCount = {};
             let flattenCandidateMember = flattenDeep(goStructCandidate[key]);
             flattenCandidateMember.forEach(x => {
-                if (memberCount[x]) {
-                    memberCount[x] = memberCount[x] + 1;
-                } else {
-                    memberCount[x] = 1;
+                if (!memberCount[x]) {
+                    memberCount[x] = 0;
                 }
+                memberCount[x] = memberCount[x] + 1;
             });
             Object.keys(memberCount).forEach(k => {
                 memberCount[k] = memberCount[k] < goStructCandidate[key].length;
@@ -113,35 +113,24 @@ function flattenDeep(arr) {
 
 function makeGoType(arrayTypes, key, isReferenceType) {
     const userDefinedType = makeGoStructVariable(key);
-    if (arrayTypes.length === 1) {
-        switch (arrayTypes[0]) {
-            case "array_object":
-                return `[]${userDefinedType}`;
-            case "object":
-                return isReferenceType ? "*" + userDefinedType : userDefinedType;
-            case "boolean":
-                return `bool`;
-            case "array_int":
-                return `[]int`;
-            case "array_string":
-                return `[]string`;
-            case "array_float32":
-                return `[]float32`;
-            case "array_float64":
-                return `[]float64`;
-            case "array_empty":
-                return `[]interface{}`;
-            case "null":
-                return `interface{}`;
-            default:
-                return arrayTypes[0];
-        }
-    }
+
     if (arrayTypes.includes("array_object")) {
         return `[]${userDefinedType}`;
     }
 
-    return "interface{}"
+    if (arrayTypes.length === 0) {
+        return "interface{}"
+    }
+
+    if (goTypeTable.hasOwnProperty(arrayTypes[0])) {
+        return goTypeTable[arrayTypes[0]]
+    }
+
+    if (arrayTypes[0] === "object") {
+        return isReferenceType ? "*" + userDefinedType : userDefinedType;
+    }
+    return arrayTypes[0];
+
 }
 
 function makeGoStructVariable(s) {
@@ -149,47 +138,6 @@ function makeGoStructVariable(s) {
 
 }
 
-// https://github.com/golang/lint/blob/8f45f776aaf18cebc8d65861cc70c33c60471952/lint.go#L771
-const commonInitialisms = {
-    "ACL": true,
-    "API": true,
-    "ASCII": true,
-    "CPU": true,
-    "CSS": true,
-    "DNS": true,
-    "EOF": true,
-    "GUID": true,
-    "HTML": true,
-    "HTTP": true,
-    "HTTPS": true,
-    "ID": true,
-    "IP": true,
-    "JSON": true,
-    "LHS": true,
-    "QPS": true,
-    "RAM": true,
-    "RHS": true,
-    "RPC": true,
-    "SLA": true,
-    "SMTP": true,
-    "SQL": true,
-    "SSH": true,
-    "TCP": true,
-    "TLS": true,
-    "TTL": true,
-    "UDP": true,
-    "UI": true,
-    "UID": true,
-    "UUID": true,
-    "URI": true,
-    "URL": true,
-    "UTF8": true,
-    "VM": true,
-    "XML": true,
-    "XMPP": true,
-    "XSRF": true,
-    "XSS": true,
-};
 
 function makeCommonInitialisms(camelStr) {
     return camelStr.replace(/([a-z0-9])([A-Z])/g, "$1 $2").split(" ").map(x => {
