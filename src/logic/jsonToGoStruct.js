@@ -33,7 +33,7 @@ function makeStructMap(obj, structName, goFloat64) {
         if (!jsonObj) {
             return;
         }
-
+        // eslint-disable-next-line no-unused-vars
         for (const key of getSortedKey(jsonObj)) {
             const value = jsonObj[key];
             const type = analyseType(value, goFloat64);
@@ -88,6 +88,7 @@ function makeStructMap(obj, structName, goFloat64) {
 
         const keyList = getSortedKey(layers);
         const keys = keyList.reverse().slice(0, keyList.length - 1);
+        // eslint-disable-next-line no-unused-vars
         for (const key of keys) {
             layers[key].forEach(x => {
                 let keyStr = x[0];
@@ -159,7 +160,7 @@ function constructGoType(candidates, omitemptyMember, rootType, rootStructName) 
         let goStruct = (key === rootStructName && rootType.includes("array_")) ? `type ${makeGoStructVariable(key)} []struct {` : `type ${makeGoStructVariable(key)} struct {`;
 
         const values = Object.keys(candidates[key]);
-
+        // eslint-disable-next-line no-unused-vars
         for (const key2 of values) {
             const arrayTypes = candidates[key][key2];
             const isReferenceType = key === key2;
